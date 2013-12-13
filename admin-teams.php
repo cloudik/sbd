@@ -29,8 +29,15 @@ else {
 			</div>
 <?php
 	}
-	if ($action == 'edit') {
-	
+	if ($action == 'edit_members') {
+?>
+
+			<div class="jumbotron">
+				<h1>Dodaj zawodnika do drużyny</h1>
+				<p></p>
+				<p><a class="btn btn-primary btn-lg" href="?action=add_member&id_team=<?php echo $id_team;?>" role="button">Dodaj zawodnika</a></p>
+			</div>
+<?php	
 	}
 } // end of 'else' for empty($_POST); jumbotron section
 ?>
@@ -56,7 +63,10 @@ else {
 				$druzyna->confirmRemoveTeam($id_team, $confirm);
 				break;
 			case 'edit_members';
-				$druzyna->editTeamMembers($id_team);
+				$druzyna->editTeamMembers($id_team, $action);
+				break;
+			case 'add_member';
+				$druzyna->editTeamMembers($id_team, $action);
 				break;
 			default:
 				$druzyna->selectTeams('edit');
@@ -65,16 +75,16 @@ else {
 	}	
 		
 		
-	if(!empty($_POST)) {
+	if(!empty($_POST) && !empty($_POST['formType'])) {
+		$druzyna->validate($_POST, $_POST['formType']);
 		
+		/*
 		if($_POST['formType'] == 'teamform') 
 			$druzyna->validate($_POST, $_POST['formType']);
 		elseif($_POST['formType'] == 'association') {
 			$druzyna->validate($_POST, $_POST['formType']);
-
-			
-			
-		}	
+		*/
+	
 	}
 	
 

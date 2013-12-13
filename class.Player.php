@@ -5,13 +5,9 @@ class Player extends Baza {
 	/*******************************************************/
 	function selectAll() {
 		$stmt = $this->pdo->query('SELECT * FROM zawodnik');
-		//$stmt = $stmt->fetch(PDO::FETCH_ASSOC);
-		foreach ($stmt as $row) {
-			echo '<pre>';
-			print_r($row);
-			echo '</pre>';
-		}
+		$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
+		return $row;
 	}
     
     function getName($id) {

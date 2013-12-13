@@ -222,15 +222,25 @@ class Team extends Baza {
 						$function = 'NULL';
 					else
 						$function = '\''.$data['function'].'\'';	
+					
+					
+					//check if this player is already in the team
+					$test = $this->connectionExists($data['teamID'], $data['playerID']);
+					
+					if($test) 
+						$sql = 'update  zawodnik_druzyna set `id_zawodnik`=\''.$data['playerID'].'\', `id_druzyna`=\''.$data['teamID'].'\', `data_od`=\''.$data['dateFrom'].'\', `data_do`='.$dateTo.', `pozycja`=\''.$data['position'].'\', `funkcja`='.$function.' where id_druzyna='.$data['teamID'].' and id_zawodnik='.$data['playerID'];
+					else 
+						$sql = 'insert into zawodnik_druzyna (`id_zawodnik`, `id_druzyna`, `data_od`, `data_do`, `pozycja`, `funkcja`) values (\''.$data['playerID'].'\', \''.$data['teamID'].'\', \''.$data['dateFrom'].'\', '.$dateTo.', \''.$data['position'].'\', '.$function.') ';	
 
-					$sql = 'update  zawodnik_druzyna set `id_zawodnik`=\''.$data['playerID'].'\', `id_druzyna`=\''.$data['teamID'].'\', `data_od`=\''.$data['dateFrom'].'\', `data_do`='.$dateTo.', `pozycja`=\''.$data['position'].'\', `funkcja`='.$function.' where id_druzyna='.$data['teamID'].' and id_zawodnik='.$data['playerID'];
-					//echo $sql; 
 					$result = $this->pdo->exec($sql);
 					if($result > 0) {
 						$zawodnik = new Player($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);
 						$name = $zawodnik->getName($data['playerID']);
 						echo '
-						<div class="alert alert-success">Pomyślnie edytowano zawodnika: '.$name['imie'].' '.$name['nazwisko'].'</div>
+						<div class="alert alert-success">
+							<p>Pomyślnie edytowano powiązanie zawodnika: '.$name['imie'].' '.$name['nazwisko'].'</p>
+							<p>Powrót do edycji <a href="'.$data['teamID'].'">drużyny</a>.</p>
+						</div>
 						';
 					}
 					else {
@@ -247,6 +257,12 @@ class Team extends Baza {
 			}
 	}
 	
+	function connectionExists($id_team, $id_player) {
+		$stmt = $this->pdo->query('select count(*) from zawodnik_druzyna where id_zawodnik='.$id_player.' and id_druzyna='.$id_team);
+		$rows = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		return $rows[0];
+	}
 	
 	/****************************************************************/
 	/* function updatePlayer($team)
@@ -622,81 +638,146 @@ class Team extends Baza {
 		
 	}
 	
-	function editTeamMembers($id_team) {
-		$current = $this->getCurrentConnections($id_team);
-		$total = count($current);
-		foreach($current as $key => $value) {
+	function editTeamMembers($id_team, $action) {
+		if($action == 'edit_members') {
+			$current = $this->getCurrentConnections($id_team);
+			$total = count($current);
+			foreach($current as $key => $value) {
+				
+				$zawodnik = new Player($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);
 			
+				if(!($key%3)) {
+						echo '<div class="row">';
+				}	
+				
+				
+				echo '
+					
+					<div class="col-lg-4">';
+					$zawodnik->selectPlayer($value['id_zawodnik']);
+				echo '	
+						<form role="form" action="admin-teams.php" method="post">
+						
+							<div class="form-group">
+								<label for="dateFrom">Gra w drużynie od:</label>
+								<input type="text" class="form-control" name="dateFrom" value="'.$value['data_od'].'">
+							</div>
+							<div class="form-group">
+								<label for="dateTo">Grał(a) w drużynie do:</label>
+								<input type="text" class="form-control" name="dateTo" value="'.$value['data_do'].'">
+							</div>
+							<div class="form-group">
+								<label for="position">Pozycja:</label>
+									<select name="position" class="form-control">
+										<option value="1"'; if($value['pozycja'] == '1') { echo ' selected'; } echo '>1</option>
+										<option value="2"'; if($value['pozycja'] == '2') { echo ' selected'; } echo '>2</option>
+										<option value="3"'; if($value['pozycja'] == '3') { echo ' selected'; } echo '>3</option>
+										<option value="4"'; if($value['pozycja'] == '4') { echo ' selected'; } echo '>4</option>
+										<option value="A"'; if($value['pozycja'] == 'A') { echo ' selected'; } echo '>A</option>
+									</select>
+							</div>
+							<div class="form-group">
+								<label for="function">Funkcja:</label>
+									<select name="function" class="form-control">
+										<option value="S"'; if($value['funkcja'] == 'S') { echo ' selected'; } echo '>skip</option>
+										<option value="V"'; if($value['funkcja'] == 'V') { echo ' selected'; } echo '>viceskip</option>
+										<option value="none"';  if(empty($value['funkcja'])) { echo ' selected'; } echo '>---</option>
+									</select>
+							</div>
+							
+							<div class="form-group">
+								<input type="hidden" class="form-control" name="formType" value="association">
+								<input type="hidden" class="form-control" name="playerID" value="'.$value['id_zawodnik'].'">
+								<input type="hidden" class="form-control" name="teamID" value="'.$id_team.'">
+							</div>
+							
+						
+							<button type="submit" name="submit" class="btn btn-success">Zapisz</button>
+							<button type="submit" name="delete" class="btn btn-danger">Usuń powiązanie</button>
+							<a href="admin-teams.php" class="btn btn-default">Anuluj</a>
+						</form>
+							
+					</div>	
+				';
+				
+				
+				if(($key%3 == 2) || $key == ($total-1)) {
+						echo '
+							</div>	
+						';
+				}
+					
+			
+			}
+			
+			
+		}
+		elseif($action == 'add_member') {
 			$zawodnik = new Player($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);
-		
-			if(!($key%3)) {
-					echo '<div class="row">';
-			}	
-			
+			$all = $zawodnik->selectAll();
 			
 			echo '
-				
-				<div class="col-lg-4">';
-				$zawodnik->selectPlayer($value['id_zawodnik']);
-			echo '	
-					<form role="form" action="admin-teams.php" method="post">
 					
-						<div class="form-group">
-							<label for="dateFrom">Gra w drużynie od:</label>
-							<input type="text" class="form-control" name="dateFrom" value="'.$value['data_od'].'">
-						</div>
-						<div class="form-group">
-							<label for="dateTo">Grał(a) w drużynie do:</label>
-							<input type="text" class="form-control" name="dateTo" value="'.$value['data_do'].'">
-						</div>
-						<div class="form-group">
-							<label for="position">Pozycja:</label>
-								<select name="position" class="form-control">
-									<option value="1"'; if($value['pozycja'] == '1') { echo ' selected'; } echo '>1</option>
-									<option value="2"'; if($value['pozycja'] == '2') { echo ' selected'; } echo '>2</option>
-									<option value="3"'; if($value['pozycja'] == '3') { echo ' selected'; } echo '>3</option>
-									<option value="4"'; if($value['pozycja'] == '4') { echo ' selected'; } echo '>4</option>
-									<option value="A"'; if($value['pozycja'] == 'A') { echo ' selected'; } echo '>A</option>
-								</select>
-						</div>
-						<div class="form-group">
-							<label for="function">Funkcja:</label>
-								<select name="function" class="form-control">
-									<option value="S"'; if($value['funkcja'] == 'S') { echo ' selected'; } echo '>skip</option>
-									<option value="V"'; if($value['funkcja'] == 'V') { echo ' selected'; } echo '>viceskip</option>
-									<option value="none"';  if(empty($value['funkcja'])) { echo ' selected'; } echo '>---</option>
-								</select>
-						</div>
-						
-						<div class="form-group">
-							<input type="hidden" class="form-control" name="formType" value="association">
-							<input type="hidden" class="form-control" name="playerID" value="'.$value['id_zawodnik'].'">
-							<input type="hidden" class="form-control" name="teamID" value="'.$id_team.'">
-						</div>
-						
-					
-						<button type="submit" name="submit" class="btn btn-success">Zapisz</button>
-						<button type="submit" name="delete" class="btn btn-danger">Usuń powiązanie</button>
-						<a href="admin-teams.php" class="btn btn-default">Anuluj</a>
-					</form>
-						
-				</div>	
+					<div class="col-lg-4">
+						<form role="form" action="admin-teams.php" method="post">
+							<div class="form-group">
+								<label for="position">Zawodnik:</label>
+									<select name="playerID" class="form-control">
+									
 			';
+			foreach ($all as $key => $value) {
+				echo '
+					<option value="'.$value['id_zawodnik'].'"'; if($value['id_zawodnik'] == 'none') { echo ' selected'; } echo '>'.$value['imie'].' '.$value['nazwisko'].'</option>
+					
+				';
 			
-			
-			if(($key%3 == 2) || $key == ($total-1)) {
-					echo '
-						</div>	
-					';
 			}
-				
-			//echo '<pre>';
-			//print_r($value);
-			//echo '</pre>';
+			echo '
+								</select>
+							</div>	
+							<div class="form-group">
+								<label for="dateFrom">Gra w drużynie od:</label>
+								<input type="text" class="form-control" name="dateFrom" value="">
+							</div>
+							<div class="form-group">
+								<label for="dateTo">Grał(a) w drużynie do:</label>
+								<input type="text" class="form-control" name="dateTo" value="">
+							</div>
+							<div class="form-group">
+								<label for="position">Pozycja:</label>
+									<select name="position" class="form-control">
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="A">A</option>
+									</select>
+							</div>
+							<div class="form-group">
+								<label for="function">Funkcja:</label>
+									<select name="function" class="form-control">
+										<option value="S">skip</option>
+										<option value="V">viceskip</option>
+										<option value="none">---</option>
+									</select>
+							</div>
+							<div class="form-group">
+								<input type="hidden" class="form-control" name="formType" value="association">
+								<input type="hidden" class="form-control" name="teamID" value="'.$id_team.'">
+							</div>
+						
+							
+						
+							<button type="submit" name="submit" class="btn btn-success">Zapisz</button>
+							<a href="admin-teams.php" class="btn btn-default">Anuluj</a>
+			
+								
+						
+						</form>		
+					</div>	
+			';
 		}
-		
-		
-	}
+	}	
 }
 
 ?>
