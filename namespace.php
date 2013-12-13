@@ -5,5 +5,6 @@ require('mysql_config.php');
 include('class.Country.php');
 include('class.Player.php');
 include('class.Team.php');
+include('class.Tournament.php');
 //include('class.Country.php');
 ?>

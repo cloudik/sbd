@@ -139,7 +139,7 @@ class Country extends Baza {
 		if ($action == 'insert') {
 			try {
 				$sql = 'insert into kraj (`nazwa`, `img`, `akronym`) values (\''.$country['nazwa'].'\', \''.$country['img'].'\', \''.$country['akronym'].'\')';
-				
+				//$result
 				$result = $this->pdo->exec($sql);
 				if($result > 0) {
 					echo '

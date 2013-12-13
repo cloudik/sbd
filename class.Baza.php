@@ -33,6 +33,12 @@ class Baza
 		}
 	}
 	
+	function debug($i) {
+		echo '<pre>';
+		print_r($i);
+		echo '</pre>';
+	}
+	
 	function numberOfResults($table) {
 		$stmt = $this->pdo->query('select count(*) from '.$table);
 		$rows = $stmt->fetch(PDO::FETCH_NUM);

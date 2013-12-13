@@ -239,7 +239,7 @@ class Team extends Baza {
 						echo '
 						<div class="alert alert-success">
 							<p>Pomyślnie edytowano powiązanie zawodnika: '.$name['imie'].' '.$name['nazwisko'].'</p>
-							<p>Powrót do edycji <a href="'.$data['teamID'].'">drużyny</a>.</p>
+							<p>Powrót do edycji <a href="?action=edit_members&id_team='.$data['teamID'].'">drużyny</a>.</p>
 						</div>
 						';
 					}

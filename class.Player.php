@@ -382,7 +382,7 @@ class Player extends Baza {
 						<div class="alert alert-danger">Wystąpił błąd podczas usuwania rekorów.</div>
 					';
 				}
-				$result->closeCursor();
+				//$result->closeCursor();
 			}
 			catch(PDOException $e)
 			{
@@ -411,7 +411,7 @@ class Player extends Baza {
 						<div class="alert alert-danger">Wystąpił błąd podczas usuwania rekorów.</div>
 					';
 				}
-				$result->closeCursor();
+				//$result->closeCursor();
 			}
 			catch(PDOException $e)
 			{
