@@ -46,7 +46,7 @@ echo '
 					<div class="navbar-collapse collapse">
 						<ul class="nav navbar-nav">
 							<!--<li class="active"><a href="/sbd/">home</a></li>-->
-							<li><a href="live.php">live</a></li>
+							<!--<li><a href="live.php">live</a></li>-->
 							<li><a href="games.php">mistrzostwa</a></li>
 							<li><a href="team.php">drużyny</a></li>
 							<li><a href="player.php">zawodnicy</a></li>
@@ -83,8 +83,8 @@ echo '
 		<hr class="featurette-divider">
 
 		<footer>
-			<p class="pull-right"><a href="#">Back to top</a></p>
-			<p>&copy; 2013 Company, Inc. · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
+			<p class="pull-right"><a href="#">Do góry</a></p>
+			<p>&copy; 2013 SBD. · <a href="#">Ustawienia prywatności</a></p>
 		</footer>
 	
 	</div>

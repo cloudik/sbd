@@ -33,7 +33,7 @@ class Team extends Baza {
 	
 	function getCurrentConnections($id_team) {
 		$currentDate = date('Y-m-d');
-		$sql = 'SELECT * FROM zawodnik_druzyna where id_druzyna='.$id_team.' and data_do is NULL';
+		$sql = 'SELECT * FROM zawodnik_druzyna where id_druzyna='.$id_team.' and data_do is NULL or data_do > \''.$currentDate.'\'';
 		$stmt = $this->pdo->query($sql);
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
@@ -42,7 +42,7 @@ class Team extends Baza {
 	
 	function getPastConnections($id_team) {
 		$currentDate = date('Y-m-d');
-		$sql = 'SELECT * FROM zawodnik_druzyna where id_druzyna='.$id_team.' and data_do >'.$currentDate;
+		$sql = 'SELECT * FROM zawodnik_druzyna where id_druzyna='.$id_team.' and data_do < \''.$currentDate.'\'';
 		$stmt = $this->pdo->query($sql);
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
@@ -641,8 +641,11 @@ class Team extends Baza {
 	function editTeamMembers($id_team, $action) {
 		if($action == 'edit_members') {
 			$current = $this->getCurrentConnections($id_team);
-			$total = count($current);
-			foreach($current as $key => $value) {
+            $past = $this->getPastConnections($id_team);
+               
+            $temp = array_merge($current, $past);
+			$total = count($temp);
+			foreach($temp as $key => $value) {
 				
 				$zawodnik = new Player($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);
 			
@@ -660,11 +663,11 @@ class Team extends Baza {
 						
 							<div class="form-group">
 								<label for="dateFrom">Gra w drużynie od:</label>
-								<input type="text" class="form-control" name="dateFrom" value="'.$value['data_od'].'">
+								<input type="date" class="form-control" name="dateFrom" value="'.$value['data_od'].'">
 							</div>
 							<div class="form-group">
 								<label for="dateTo">Grał(a) w drużynie do:</label>
-								<input type="text" class="form-control" name="dateTo" value="'.$value['data_do'].'">
+								<input type="date" class="form-control" name="dateTo" value="'.$value['data_do'].'">
 							</div>
 							<div class="form-group">
 								<label for="position">Pozycja:</label>
@@ -737,11 +740,11 @@ class Team extends Baza {
 							</div>	
 							<div class="form-group">
 								<label for="dateFrom">Gra w drużynie od:</label>
-								<input type="text" class="form-control" name="dateFrom" value="">
+								<input type="date" class="form-control" name="dateFrom" value="">
 							</div>
 							<div class="form-group">
 								<label for="dateTo">Grał(a) w drużynie do:</label>
-								<input type="text" class="form-control" name="dateTo" value="">
+								<input type="date" class="form-control" name="dateTo" value="">
 							</div>
 							<div class="form-group">
 								<label for="position">Pozycja:</label>

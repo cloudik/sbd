@@ -169,7 +169,7 @@ class Player extends Baza {
 						</div>
 						<div class="form-group">
 							<label for="birthdayInput">Data urodzenia (rrrr-mm-dd):</label>
-							<input type="text" class="form-control" name="birthdayInput" type="date" value="'.$birth.'">
+							<input type="date" class="form-control" name="birthdayInput" type="date" value="'.$birth.'">
 						</div>
 						<div class="form-group">
 							<label for="deliveryInput">Delivery:</label>
@@ -272,10 +272,11 @@ class Player extends Baza {
 		if(empty($player['idPlayer']))
 			$action = 'insert';
 		else 
-			$action = 'edit'; 			
-
+			$action = 'edit'; 
+			
 		$name = $player['nameInput'];
 		$surname = $player['surnameInput'];
+		
 		$birth = $player['birthdayInput'];
 		$delivery = $player['deliveryInput'];
 		$sex = $player['sexInput'];

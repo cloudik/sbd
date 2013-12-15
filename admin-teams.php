@@ -77,7 +77,6 @@ else {
 		
 	if(!empty($_POST) && !empty($_POST['formType'])) {
 		$druzyna->validate($_POST, $_POST['formType']);
-		
 		/*
 		if($_POST['formType'] == 'teamform') 
 			$druzyna->validate($_POST, $_POST['formType']);
