@@ -428,6 +428,36 @@ class Player extends Baza {
 		
 	}
 	
+	function searchPlayer($input) {
+		$sql = 'select id_zawodnik from zawodnik where nazwisko like \'%'.$input.'%\'';
+		
+		$stmt = $this->pdo->query($sql);
+		$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$stmt->closeCursor();
+
+		$i = 0;
+		$total = count($row);
+		
+		foreach($row as $key => $value) {
+			
+			if($i%3 == 0) {
+				echo '<div class="row">';	
+			}
+			
+			echo '<div class="col-lg-4">';
+			$this->selectPlayer($value['id_zawodnik']);
+			echo '</div>';
+			
+			if(($i%3 == 2) || $i == ($total-1)) {
+				echo '
+					</div>	
+				';
+			}
+				
+			$i++;
+		}
+	}
+	
 }
 
 

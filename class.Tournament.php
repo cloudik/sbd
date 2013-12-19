@@ -179,8 +179,14 @@ class Tournament extends Baza {
 		$stmt->closeCursor();
 		
 		foreach($row as $key => $game) {
-			
-			$this->debug($game);
+			$this->showGameInfo($game);
+		}
+		
+		
+	}
+	
+	/*******************************************************/
+	function showGameInfo($game) {
 			$id_mecz = $game['id_mecz'];
 			$id_team_1 = $game['id_druzyna_1'];
 			$id_team_2 = $game['id_druzyna_2'];
@@ -198,6 +204,8 @@ class Tournament extends Baza {
 			$suma1 = $this->getTotalPoints($id_mecz, $id_team_1);
 			$suma2 = $this->getTotalPoints($id_mecz, $id_team_2);
 			
+			$status = $this->getGameStatus($game['status']);
+			
 			echo '
 			<hr class="featurette-divider">
 			';
@@ -206,9 +214,9 @@ class Tournament extends Baza {
 			echo '
 			<div class="row">
 				<div class="col-lg-4">
-					<!--<img alt="140x140" data-src="holder.js/140x140" class="img-circle" style="width: 140px; height: 140px;" src="img/flags/SCO.jpg">			
-					<h2><a href="?id_team=1">Team Scotland</a></h2>
-					<p>Donec sed odio dui.</p><p><a role="button" href="?id_team=1" class="btn btn-default">Zobacz więcej »</a></p>-->
+					<p><strong>Data:</strong> '.$game['data'].'</p>
+					<p><strong>Sheet:</strong> '.$game['sheet'].'</p>
+					<p><strong>Status:</strong> '.$status.'</p>
 				</div>
 			</div>';
 			
@@ -219,7 +227,6 @@ class Tournament extends Baza {
 					<tr>
 						<th>#</th>
 						<th>Hammer</th>
-						<th>LSD</th>
 						<th>End 1</th>
 						<th>End 2</th>
 						<th>End 3</th>
@@ -244,13 +251,11 @@ class Tournament extends Baza {
 			';
 			if($id_team_1 == $game['hammer']) {
 				echo '
-						<td>*</td>
-						<td>'.$game['LSD'].'m</td>
+						<td>* / '.$game['LSD'].'cm</td>
 				';
 			}
 			else {
 				echo '
-						<td></td>
 						<td></td>
 				';
 			}	
@@ -274,13 +279,11 @@ class Tournament extends Baza {
 			
 			if($id_team_2 == $game['hammer']) {
 				echo '
-						<td>*</td>
-						<td>'.$game['LSD'].'m</td>
+						<td>* / '.$game['LSD'].'cm</td>
 				';
 			}
 			else {
 				echo '
-						<td></td>
 						<td></td>
 				';
 			}
@@ -302,12 +305,10 @@ class Tournament extends Baza {
 			</div>
 			</div>
 			';
-			
-		}
-		
-		
+	
 	}
 	
+	/*******************************************************/
 	function getTotalPoints($id_game, $id_team) {
 		$sql = 'select end_1, end_2, end_3, end_4, end_5, end_6, end_7, end_8, end_9, end_10, end_11 from game_end_stat where id_mecz='.$id_game.' and id_druzyna='.$id_team;
 		$stmt = $this->pdo->query($sql);	
@@ -315,15 +316,46 @@ class Tournament extends Baza {
 		$stmt->closeCursor();
 		
 		$suma = 0;
-		foreach($row as $key => $value) {
-			if(($value == 'X') || ($value == NULL))
-				$end = 0;
-			else 
-				$end = $value;
-				
-			$suma += $end;
-		}
+		if(!empty($row)) {
+			foreach($row as $key => $value) {
+				if(($value == 'X') || ($value == NULL))
+					$end = 0;
+				else 
+					$end = $value;
+					
+				$suma += $end;
+			}
+		}	
 		return $suma;
+	}
+	
+	/*******************************************************/
+	function getGameStatus($status) {
+		$sql = 'select opis from status where id_status='.$status;
+		$stmt = $this->pdo->query($sql);	
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		return $row[0];
+	}
+	
+	/*******************************************************/
+	function getGamesWithStatus($status) {
+		if($status == 'live')
+			$id_status = 1;
+		else 
+			$id_status = 2;
+		
+		$sql = 'select * from mecz where status ='.$id_status;
+		$stmt = $this->pdo->query($sql);	
+		$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$stmt->closeCursor();
+		//return $row[0];
+
+		foreach($row as $key => $value) {
+		
+			$this->showGameInfo($value);
+		}
+		
 	}
 }	
 ?>
