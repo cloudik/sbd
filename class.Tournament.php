@@ -170,5 +170,160 @@ class Tournament extends Baza {
 		
 	}
 
+	/*******************************************************/
+	function showAllGames($id) {
+		$sql = 'SELECT * FROM mecz where id_turniej='.$id;
+		
+		$stmt = $this->pdo->query($sql);	
+		$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$stmt->closeCursor();
+		
+		foreach($row as $key => $game) {
+			
+			$this->debug($game);
+			$id_mecz = $game['id_mecz'];
+			$id_team_1 = $game['id_druzyna_1'];
+			$id_team_2 = $game['id_druzyna_2'];
+			
+			
+			$sql = 'select * from game_end_stat where id_mecz='.$id_mecz;
+			$stmt = $this->pdo->query($sql);	
+			$gameStats = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$stmt->closeCursor();
+			
+			$druzyna = new Team($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);
+			$teamName1 = $druzyna->getTeamName($id_team_1);
+			$teamName2 = $druzyna->getTeamName($id_team_2);
+			
+			$suma1 = $this->getTotalPoints($id_mecz, $id_team_1);
+			$suma2 = $this->getTotalPoints($id_mecz, $id_team_2);
+			
+			echo '
+			<hr class="featurette-divider">
+			';
+			
+			
+			echo '
+			<div class="row">
+				<div class="col-lg-4">
+					<!--<img alt="140x140" data-src="holder.js/140x140" class="img-circle" style="width: 140px; height: 140px;" src="img/flags/SCO.jpg">			
+					<h2><a href="?id_team=1">Team Scotland</a></h2>
+					<p>Donec sed odio dui.</p><p><a role="button" href="?id_team=1" class="btn btn-default">Zobacz więcej »</a></p>-->
+				</div>
+			</div>';
+			
+			echo '
+			<div class="row">
+			<div class="table-responsive">
+				<table class="table table-bordered">
+					<tr>
+						<th>#</th>
+						<th>Hammer</th>
+						<th>LSD</th>
+						<th>End 1</th>
+						<th>End 2</th>
+						<th>End 3</th>
+						<th>End 4</th>
+						<th>End 5</th>
+						<th>End 6</th>
+						<th>End 7</th>
+						<th>End 8</th>
+						<th>End 9</th>
+						<th>End 10</th>
+			';	
+				if(!empty($gameStats[0]['end_11'])) {
+					echo '
+						<th>End 11</th>
+					';	
+				}	
+			echo '	
+						<th>Suma:</th>
+					</tr>
+					<tr>
+						<td><a href="team.php?id_team='.$id_team_1.'">'.$teamName1.'</a></td>
+			';
+			if($id_team_1 == $game['hammer']) {
+				echo '
+						<td>*</td>
+						<td>'.$game['LSD'].'m</td>
+				';
+			}
+			else {
+				echo '
+						<td></td>
+						<td></td>
+				';
+			}	
+			
+			echo '
+						<td>'.$gameStats[0]['end_1'].'</td>
+						<td>'.$gameStats[0]['end_2'].'</td>
+						<td>'.$gameStats[0]['end_3'].'</td>
+						<td>'.$gameStats[0]['end_4'].'</td>
+						<td>'.$gameStats[0]['end_5'].'</td>
+						<td>'.$gameStats[0]['end_6'].'</td>
+						<td>'.$gameStats[0]['end_7'].'</td>
+						<td>'.$gameStats[0]['end_8'].'</td>
+						<td>'.$gameStats[0]['end_9'].'</td>
+						<td>'.$gameStats[0]['end_10'].'</td>
+						<td>'.$suma1.'</td>
+					</tr>
+					<tr>
+						<td><a href="team.php?id_team='.$id_team_2.'">'.$teamName2.'</a></td>
+			';
+			
+			if($id_team_2 == $game['hammer']) {
+				echo '
+						<td>*</td>
+						<td>'.$game['LSD'].'m</td>
+				';
+			}
+			else {
+				echo '
+						<td></td>
+						<td></td>
+				';
+			}
+			
+			echo '	
+						<td>'.$gameStats[1]['end_1'].'</td>
+						<td>'.$gameStats[1]['end_2'].'</td>
+						<td>'.$gameStats[1]['end_3'].'</td>
+						<td>'.$gameStats[1]['end_4'].'</td>
+						<td>'.$gameStats[1]['end_5'].'</td>
+						<td>'.$gameStats[1]['end_6'].'</td>
+						<td>'.$gameStats[1]['end_7'].'</td>
+						<td>'.$gameStats[1]['end_8'].'</td>
+						<td>'.$gameStats[1]['end_9'].'</td>
+						<td>'.$gameStats[1]['end_10'].'</td>
+						<td>'.$suma2.'</td>
+					</tr>
+				</table>
+			</div>
+			</div>
+			';
+			
+		}
+		
+		
+	}
+	
+	function getTotalPoints($id_game, $id_team) {
+		$sql = 'select end_1, end_2, end_3, end_4, end_5, end_6, end_7, end_8, end_9, end_10, end_11 from game_end_stat where id_mecz='.$id_game.' and id_druzyna='.$id_team;
+		$stmt = $this->pdo->query($sql);	
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		
+		$suma = 0;
+		foreach($row as $key => $value) {
+			if(($value == 'X') || ($value == NULL))
+				$end = 0;
+			else 
+				$end = $value;
+				
+			$suma += $end;
+		}
+		return $suma;
+	}
 }	
 ?>
