@@ -4,11 +4,12 @@ require('namespace.php');
 $title = 'Edit the teams';
 show_header($title);
 
+//zmienne/parametry przekazywane w URL-u
 @$action = htmlspecialchars($_GET["action"]);
 @$id_team = htmlspecialchars($_GET["id_team"]);
 @$confirm = htmlspecialchars($_GET["confirm"]);
 
- 
+ //jeśli nie zostały przekazane zmienne z formularza i nie ma dowolnej akcji (np. edit albo add)
 if(empty($_POST) && empty($action)) {
 ?>
 			<div class="jumbotron">
@@ -19,7 +20,9 @@ if(empty($_POST) && empty($action)) {
 			</div>
 <?php
 }
+//zmienne z formularza istnieją
 else {
+//została wybrana opcja dodania danych z formularza do bazy
 	if ($action == 'add') {
 ?>
 			<div class="jumbotron">
@@ -29,6 +32,7 @@ else {
 			</div>
 <?php
 	}
+    //została wybrana opcja edycji danych w bazie
 	if ($action == 'edit_members') {
 ?>
 
@@ -44,13 +48,15 @@ else {
 
 		<div class="marketing" id="list">
 <?php
+//utworzenie obiektu druzyna odpowiadajacego za polaczenie z baza SQL i manipulacje danymi
 	$druzyna = new Team($dbms, $host, $database, $port, $username, $password);
 
-	
+	//wybrano edycje oraz istnieje ID druzyny w formularzu -> chcemy edytować dane istniejącej drużyny
 	if(($action == 'edit') && ($id_team != '')) {
 		$druzyna->editSingleTeam($id_team, $action);
 	}
 	
+    //brak danych z formularza
 	elseif(empty($_POST)) {
 		switch($action) {
 			case 'edit':
@@ -74,16 +80,9 @@ else {
 		}
 	}	
 		
-		
+		//są dane z formularza i jest wybrany typ formularza
 	if(!empty($_POST) && !empty($_POST['formType'])) {
 		$druzyna->validate($_POST, $_POST['formType']);
-		/*
-		if($_POST['formType'] == 'teamform') 
-			$druzyna->validate($_POST, $_POST['formType']);
-		elseif($_POST['formType'] == 'association') {
-			$druzyna->validate($_POST, $_POST['formType']);
-		*/
-	
 	}
 	
 

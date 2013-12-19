@@ -50,9 +50,10 @@ class Team extends Baza {
 	}
 	
 	function showTeamForm($team) {
+        //szary defaultowy obrazek
 		$src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAACMCAYAAACuwEE+AAACeklEQVR4nO3YMXKjWBRA0d7/UsjISMjIFCpnCWyBjmA0GnW5b5U9bdQnOFXCyPVVfpcP8o9t23b4XT/+9AfgWgRDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIXmLYKZp2odheHnufr/vwzDsy7KcP1vXdR+G4bSu67de7zu5fDCPg3h1fhzH/wxwHMd9nudz+OM4ftv1vpvLBvN41R5Den7PsiznbnAM8NgBbrfbvm3bfrvd9mEY9vv9fp47hrssy3nuK9b703/Dvy6Y40p9dYs4Bvx8i3ge2HF8DHSe5/O28RjPV613NZcN5tGrAU7TtM/zfA7yVwN83gG27ePbzmevdyVvGcwxpHVdPxzgqyv+2GWO3eWr17uStwzmOH42TdOHzxTH+eM55dWzxmeudzVvGcyj5yt+27Z/7R7P31rGcTyPH19/1XpX81cG86v/izx+K9q2f3aDx9/9zPWu6C2C4f8jGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQ/ARf9kfKnj/wOwAAAABJRU5ErkJggg==';
 		
-		
+		//jesli zostaly przekazane dane - przepisanie zmiennych do takich o prostszych nazwach
 		if(!empty($team)) {
 			$teamID = $team['teamID'];
 			$teamName = $team['teamName'];
@@ -121,7 +122,7 @@ class Team extends Baza {
 						
 				</div>	
 			';
-		
+		//jesli akcja jest rozna od "dodaj"
 			if(@$_GET['action'] != 'add') {
 			echo ' <div class="col-lg-4">';
 			echo '
@@ -183,11 +184,10 @@ class Team extends Baza {
 	}
 	/********************************************************************/
 	function changeConnection($data) {
-		
+		//w formularzu istnialo pole "delete"
 		if(isset($data['delete'])) {
 				try {
 					$sql = 'delete from zawodnik_druzyna where id_zawodnik='.$data['playerID'].' and id_druzyna='.$data['teamID'];
-					//echo $sql; 
 					$result = $this->pdo->exec($sql);
 					if($result > 0) {
 						
@@ -211,8 +211,10 @@ class Team extends Baza {
 				}
 
 			}
+            //w formularzy wybrano opcje "submit" - dodanie nowego rekordu do bazy
 			elseif(isset($data['submit'])) {
 				try {
+                    //w przypadku pustych pull - przypisanie wartosci NULL do zmiennych - poprawna forma zapytania SQL
 					if(empty($data['dateTo']))
 						$dateTo = 'NULL';
 					else
@@ -639,14 +641,17 @@ class Team extends Baza {
 	}
 	
 	function editTeamMembers($id_team, $action) {
+        //wybrano edycje powiazan
 		if($action == 'edit_members') {
+            //tablice z uzytkownikami przynalezacymi do druzyny
 			$current = $this->getCurrentConnections($id_team);
             $past = $this->getPastConnections($id_team);
-               
+            //laczymy tablice w jedna   
             $temp = array_merge($current, $past);
 			$total = count($temp);
+            //w petli wyswietlamy dane wszystkich uzytkownikow
 			foreach($temp as $key => $value) {
-				
+				//ponowne polaczenie z baza danych poprzez obiekt Player
 				$zawodnik = new Player($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);
 			
 				if(!($key%3)) {
@@ -715,7 +720,10 @@ class Team extends Baza {
 			
 			
 		}
+         //wybrano akcje
 		elseif($action == 'add_member') {
+        
+            //pobieramy liste wszystkich zawodnikow w bazie
 			$zawodnik = new Player($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);
 			$all = $zawodnik->selectAll();
 			
@@ -728,6 +736,7 @@ class Team extends Baza {
 									<select name="playerID" class="form-control">
 									
 			';
+            //zawodnikow wyswietlamy w formie listy
 			foreach ($all as $key => $value) {
 				echo '
 					<option value="'.$value['id_zawodnik'].'"'; if($value['id_zawodnik'] == 'none') { echo ' selected'; } echo '>'.$value['imie'].' '.$value['nazwisko'].'</option>
