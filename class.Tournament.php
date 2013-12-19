@@ -38,7 +38,7 @@ class Tournament extends Baza {
 		
 		$i = 0;
 		$total = count($data);
-			
+		
 		foreach ($data as $key => $tournament) {	
 			
 			if($i%3 == 0) {

@@ -8,10 +8,7 @@
 /*
 /**************************************************************************************/
 function show_header($title) {
-echo '
-
-
-<!DOCTYPE html>
+echo '<!DOCTYPE html>
 <html>
   <head>
     <title>'.$title.'</title>

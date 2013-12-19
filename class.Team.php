@@ -667,7 +667,7 @@ class Team extends Baza {
 							</div>
 							<div class="form-group">
 								<label for="dateTo">Grał(a) w drużynie do:</label>
-								<input type="date" class="form-control" name="dateTo" value="'.$value['data_do'].'">
+								<input type="date" class="form-control" name="dateTo"  value="'.$value['data_do'].'">
 							</div>
 							<div class="form-group">
 								<label for="position">Pozycja:</label>

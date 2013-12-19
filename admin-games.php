@@ -23,6 +23,8 @@ show_header($title);
 <?php
 	$zawody = new Tournament($dbms, $host, $database, $port, $username, $password);
 	
+   
+    
 	if(!empty($_POST)) {
 		$zawody->debug($_POST);
 		if(isset($_POST['submit'])) {

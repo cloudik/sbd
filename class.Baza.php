@@ -35,7 +35,7 @@ class Baza
 	
 	function debug($i) {
 		echo '<pre>';
-		print_r($i);
+		var_dump($i);
 		echo '</pre>';
 	}
 	
