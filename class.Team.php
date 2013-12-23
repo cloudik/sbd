@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 
 	
@@ -76,18 +76,18 @@ class Team extends Baza {
 					
 						<div class="form-group">
 							<label for="teamName">Nazwa:</label>
-							<input type="text" class="form-control" name="teamName" value="'.$teamName.'">
+							<input type="text" class="form-control" name="teamName" id="teamName" value="'.$teamName.'">
 						</div>
 						<div class="form-group">
 							<label for="teamCategory">Kategoria wiekowa:</label>
-								<select name="teamCategory" class="form-control">
+								<select name="teamCategory" id="teamCategory" class="form-control">
 									<option value="senior"'; if($teamCategory == 'senior') { echo ' selected'; } echo '>senior</option>
 									<option value="junior"'; if($teamCategory == 'junior') { echo ' selected'; } echo '>junior</option>
 								</select>
 						</div>
 						<div class="form-group">
 							<label for="teamSex">Kategoria:</label>
-								<select name="teamSex" class="form-control">
+								<select name="teamSex" id="teamSex" class="form-control">
 									<option value="K"'; if($teamSex == 'K') { echo ' selected'; } echo '>kobieca</option>
 									<option value="M"'; if($teamSex == 'M') { echo ' selected'; } echo '>męska</option>
 									<option value="X"'; if($teamSex == 'X') { echo ' selected'; } echo '>mixtowa</option>
@@ -95,16 +95,14 @@ class Team extends Baza {
 						</div>
 						<div class="form-group">
 							<label for="teamPhoto">Zdjęcie:</label>
-							<input type="text" class="form-control" name="teamPhoto" value="'.$teamPhoto.'">
+							<input type="text" class="form-control" name="teamPhoto" id="teamPhoto" value="'.$teamPhoto.'">
 						</div>
 						
 						<div class="form-group">
-							<label for="teamID"></label>
 							<input type="hidden" class="form-control" name="teamID" value="'.$teamID.'">
 						</div>
 						
 						<div class="form-group">
-							<label for="formType"></label>
 							<input type="hidden" class="form-control" name="formType" value="teamform">
 						</div>
 						
@@ -129,7 +127,7 @@ class Team extends Baza {
 					<hr class="featurette-divider">
 					<!--<h2>Heading</h2>-->
 					<p>Aby usunąć drużynę wciśnij poniższy przycisk. Uwaga: usunięcie drużyny jest nieodwracalne.</p>
-					<a href="?action=delete&id_team='.$teamID.'" class="btn btn-danger">Usuń drużynę</a>
+					<a href="?action=delete&amp;id_team='.$teamID.'" class="btn btn-danger">Usuń drużynę</a>
 					<hr class="featurette-divider">
 			';
 			echo '</div>	';
@@ -241,7 +239,7 @@ class Team extends Baza {
 						echo '
 						<div class="alert alert-success">
 							<p>Pomyślnie edytowano powiązanie zawodnika: '.$name['imie'].' '.$name['nazwisko'].'</p>
-							<p>Powrót do edycji <a href="?action=edit_members&id_team='.$data['teamID'].'">drużyny</a>.</p>
+							<p>Powrót do edycji <a href="?action=edit_members&amp;id_team='.$data['teamID'].'">drużyny</a>.</p>
 						</div>
 						';
 					}
@@ -361,8 +359,8 @@ class Team extends Baza {
 						<img src="'.$src.'" style="width: 140px; height: 140px;" class="img-circle" data-src="holder.js/140x140" alt="140x140">';
 			if($param == 'edit') {
 				echo '			
-						<h2><a href="?id_team='.$row['id_druzyna'].'&action='.$param.'">'.$row['nazwa'].'</a></h2>
-						<p><a href="?action=edit_members&id_team='.$row['id_druzyna'].'" class="btn btn-default">Edytuj powiązania »</a>
+						<h2><a href="?id_team='.$row['id_druzyna'].'&amp;action='.$param.'">'.$row['nazwa'].'</a></h2>
+						<p><a href="?action=edit_members&amp;id_team='.$row['id_druzyna'].'" class="btn btn-default">Edytuj powiązania »</a>
 				';
 						
 			}
@@ -373,7 +371,7 @@ class Team extends Baza {
 			}
 			
 			if($param == 'edit') {
-				echo '<a class="btn btn-default" href="?id_team='.$row['id_druzyna'].'&action='.$param.'" role="button">Edytuj dane »</a></p>';
+				echo '<a class="btn btn-default" href="?id_team='.$row['id_druzyna'].'&amp;action='.$param.'" role="button">Edytuj dane »</a></p>';
 			}
 			else {
 				echo '<p><a class="btn btn-default" href="?id_team='.$row['id_druzyna'].'" role="button">Zobacz więcej »</a></p>';
@@ -563,8 +561,8 @@ class Team extends Baza {
 				<div class="col-lg-4">
 					<p>Czy na pewno <strong>chcesz usunąć</strong> tę drużynę?</p>
 					<p><strong>Uwaga:</strong> zostaną także usunięte dane dotyczące drużyny oraz jej powiązań z zawodnikami. Może to skutkować niepełnymi danymi w innych wynikach.</p>
-					<a type="button" href="?action=delete&id_team='.$id_team.'&confirm=1" class="btn btn-danger">Usuń (brak cofnięcia akcji)</a>
-					<a type="button" href="?action=edit&id_team='.$id_team.'" class="btn btn-default">Anuluj</a>
+					<a type="button" href="?action=delete&amp;id_team='.$id_team.'&amp;confirm=1" class="btn btn-danger">Usuń (brak cofnięcia akcji)</a>
+					<a type="button" href="?action=edit&amp;id_team='.$id_team.'" class="btn btn-default">Anuluj</a>
 				</div>';
 		}	
 		else {
@@ -658,7 +656,7 @@ class Team extends Baza {
 						echo '<div class="row">';
 				}	
 				
-				
+				$uniqueID = $id_team.$value['id_zawodnik'];
 				echo '
 					
 					<div class="col-lg-4">';
@@ -667,16 +665,16 @@ class Team extends Baza {
 						<form role="form" action="admin-teams.php" method="post">
 						
 							<div class="form-group">
-								<label for="dateFrom">Gra w drużynie od:</label>
-								<input type="date" class="form-control" name="dateFrom" value="'.$value['data_od'].'">
+								<label for="dateFrom'.$uniqueID.'">Gra w drużynie od:</label>
+								<input type="date" class="form-control" name="dateFrom" id="dateFrom'.$uniqueID.'" value="'.$value['data_od'].'">
 							</div>
 							<div class="form-group">
-								<label for="dateTo">Grał(a) w drużynie do:</label>
-								<input type="date" class="form-control" name="dateTo"  value="'.$value['data_do'].'">
+								<label for="dateTo'.$uniqueID.'">Grał(a) w drużynie do:</label>
+								<input type="date" class="form-control" name="dateTo" id="dateTo'.$uniqueID.'" value="'.$value['data_do'].'">
 							</div>
 							<div class="form-group">
-								<label for="position">Pozycja:</label>
-									<select name="position" class="form-control">
+								<label for="position'.$uniqueID.'">Pozycja:</label>
+									<select name="position" id="position'.$uniqueID.'" class="form-control">
 										<option value="1"'; if($value['pozycja'] == '1') { echo ' selected'; } echo '>1</option>
 										<option value="2"'; if($value['pozycja'] == '2') { echo ' selected'; } echo '>2</option>
 										<option value="3"'; if($value['pozycja'] == '3') { echo ' selected'; } echo '>3</option>
@@ -685,8 +683,8 @@ class Team extends Baza {
 									</select>
 							</div>
 							<div class="form-group">
-								<label for="function">Funkcja:</label>
-									<select name="function" class="form-control">
+								<label for="function'.$uniqueID.'">Funkcja:</label>
+									<select name="function" id="function'.$uniqueID.'" class="form-control">
 										<option value="S"'; if($value['funkcja'] == 'S') { echo ' selected'; } echo '>skip</option>
 										<option value="V"'; if($value['funkcja'] == 'V') { echo ' selected'; } echo '>viceskip</option>
 										<option value="none"';  if(empty($value['funkcja'])) { echo ' selected'; } echo '>---</option>
@@ -732,8 +730,8 @@ class Team extends Baza {
 					<div class="col-lg-4">
 						<form role="form" action="admin-teams.php" method="post">
 							<div class="form-group">
-								<label for="position">Zawodnik:</label>
-									<select name="playerID" class="form-control">
+								<label for="playerID">Zawodnik:</label>
+									<select name="playerID" id="playerID" class="form-control">
 									
 			';
             //zawodnikow wyswietlamy w formie listy
@@ -749,15 +747,15 @@ class Team extends Baza {
 							</div>	
 							<div class="form-group">
 								<label for="dateFrom">Gra w drużynie od:</label>
-								<input type="date" class="form-control" name="dateFrom" value="">
+								<input type="date" class="form-control" name="dateFrom" id="dateFrom" value="">
 							</div>
 							<div class="form-group">
 								<label for="dateTo">Grał(a) w drużynie do:</label>
-								<input type="date" class="form-control" name="dateTo" value="">
+								<input type="date" class="form-control" name="dateTo" id="dateTo" value="">
 							</div>
 							<div class="form-group">
 								<label for="position">Pozycja:</label>
-									<select name="position" class="form-control">
+									<select name="position" class="form-control" id="position">
 										<option value="1">1</option>
 										<option value="2">2</option>
 										<option value="3">3</option>
@@ -767,7 +765,7 @@ class Team extends Baza {
 							</div>
 							<div class="form-group">
 								<label for="function">Funkcja:</label>
-									<select name="function" class="form-control">
+									<select name="function" class="form-control" id="function">
 										<option value="S">skip</option>
 										<option value="V">viceskip</option>
 										<option value="none">---</option>

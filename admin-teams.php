@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require('namespace.php');
 
 $title = 'Edit the teams';
@@ -39,7 +39,7 @@ else {
 			<div class="jumbotron">
 				<h1>Dodaj zawodnika do drużyny</h1>
 				<p></p>
-				<p><a class="btn btn-primary btn-lg" href="?action=add_member&id_team=<?php echo $id_team;?>" role="button">Dodaj zawodnika</a></p>
+				<p><a class="btn btn-primary btn-lg" href="?action=add_member&amp;id_team=<?php echo $id_team;?>" role="button">Dodaj zawodnika</a></p>
 			</div>
 <?php	
 	}

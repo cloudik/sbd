@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 /*****************************************************************************************/
 class Player extends Baza {
 	
@@ -66,12 +66,12 @@ class Player extends Baza {
 			echo '
 					<div class="col-lg-4">
 						<img src="'.$src.'" style="width: 140px; height: 140px;" class="img-circle" data-src="holder.js/140x140" alt="140x140">
-						<h2><a href="?id_player='.$row['id_zawodnik'].'&action='.$param.'">'.$row['imie'].' '.$row['nazwisko'].'</a></h2>
+						<h2><a href="?id_player='.$row['id_zawodnik'].'&amp;action='.$param.'">'.$row['imie'].' '.$row['nazwisko'].'</a></h2>
 						<p><!--Donec sed odio dui.--></p>
 			';		
 			if($param == 'edit') {
 				echo '
-						<p><a class="btn btn-default" href="?id_player='.$row['id_zawodnik'].'&action='.$param.'" role="button">Edytuj dane »</a></p>
+						<p><a class="btn btn-default" href="?id_player='.$row['id_zawodnik'].'&amp;action='.$param.'" role="button">Edytuj dane »</a></p>
 				';		
 			}			
 			else {
@@ -161,33 +161,33 @@ class Player extends Baza {
 					
 						<div class="form-group">
 							<label for="nameInput">Imię:</label>
-							<input type="text" class="form-control" name="nameInput" value="'.$name.'">
+							<input type="text" class="form-control" name="nameInput" id="nameInput" value="'.$name.'">
 						</div>
 						<div class="form-group">
 							<label for="surnameInput">Nazwisko:</label>
-							<input type="text" class="form-control" name="surnameInput" value="'.$surname.'">
+							<input type="text" class="form-control" name="surnameInput" id="surnameInput" value="'.$surname.'">
 						</div>
 						<div class="form-group">
 							<label for="birthdayInput">Data urodzenia (rrrr-mm-dd):</label>
-							<input type="date" class="form-control" name="birthdayInput" type="date" value="'.$birth.'">
+							<input type="date" class="form-control" name="birthdayInput" id="birthdayInput" value="'.$birth.'">
 						</div>
 						<div class="form-group">
 							<label for="deliveryInput">Delivery:</label>
-								<select name="deliveryInput" class="form-control">
+								<select name="deliveryInput" id="deliveryInput" class="form-control">
 									<option value="L"'; if($delivery == 'L') { echo ' selected'; } echo '>Leworęczny</option>
 									<option value="R"'; if($delivery == 'R') { echo ' selected'; } echo '>Praworęczny</option>
 								</select>
 						</div>
 						<div class="form-group">
 							<label for="sexInput">Płeć:</label>
-								<select name="sexInput" class="form-control">
+								<select name="sexInput" id="sexInput" class="form-control">
 									<option value="K"'; if($sex == 'K') { echo ' selected'; } echo '>Kobieta</option>
 									<option value="M"'; if($sex == 'M') { echo ' selected'; } echo '>Mężczyzna</option>
 								</select>
 						</div>
 						<div class="form-group">
 							<label for="countryInput">Kraje:</label>
-								<select name="countryInput" class="form-control">
+								<select name="countryInput" id="countryInput" class="form-control">
 									<option value="none">---</option>';
                                 foreach($countryList as $country) {
              
@@ -205,7 +205,6 @@ class Player extends Baza {
 						</div>
 						
 						<div class="form-group">
-							<label for="idPlayer"></label>
 							<input type="hidden" class="form-control" name="idPlayer" value="'.$idPlayer.'">
 						</div>
 						
@@ -230,7 +229,7 @@ class Player extends Baza {
 					<hr class="featurette-divider">
 					<!--<h2>Heading</h2>-->
 					<p>Aby usunąć zawodnika wciśnij poniższy przycisk. Uwaga: usunięcie zawodnika jest nieodwracalne.</p>
-					<a href="?action=delete&id_player='.$idPlayer.'" class="btn btn-danger">Usuń zawodnika</a>
+					<a href="?action=delete&amp;id_player='.$idPlayer.'" class="btn btn-danger">Usuń zawodnika</a>
 					<hr class="featurette-divider">
 			';
 			echo '</div>	';
@@ -351,8 +350,8 @@ class Player extends Baza {
 				<div class="col-lg-4">
 					<p>Czy na pewno <strong>chcesz usunąć</strong> tego zawodnika?</p>
 					<p><strong>Uwaga:</strong> zostaną także usunięte dane dotyczące użytkownika oraz jego powiązań z drużynami w których grał. Może to skutkować niepełnymi danymi w innych wynikach.</p>
-					<a type="button" href="?action=delete&id_player='.$id_player.'&confirm=1" class="btn btn-danger">Usuń (brak cofnięcia akcji)</a>
-					<a type="button" href="?action=edit&id_player='.$id_player.'" class="btn btn-default">Anuluj</a>
+					<a type="button" href="?action=delete&amp;id_player='.$id_player.'&confirm=1" class="btn btn-danger">Usuń (brak cofnięcia akcji)</a>
+					<a type="button" href="?action=edit&amp;id_player='.$id_player.'" class="btn btn-default">Anuluj</a>
 				</div>';
 		}	
 		else {

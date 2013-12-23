@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require('namespace.php');
 
 $title = 'Show the games';

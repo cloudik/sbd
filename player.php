@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require('namespace.php');
 
 @$id_player = htmlspecialchars($_GET["id_player"]);

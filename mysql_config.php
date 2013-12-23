@@ -1,4 +1,4 @@
-﻿<?php
+<?php
   $dbms     = 'mysql';
   $host     = 'localhost'; 
   $port     = '3306'; 

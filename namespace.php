@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require('view_func.php');
 require('class.Baza.php');
 require('mysql_config.php');

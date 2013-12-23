@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require('namespace.php');
 
 $title = 'Meet the teams';
