@@ -1,13 +1,23 @@
 <?php
 
 
-	
-/*****************************************************************************************/
+/**
+* Tournament - klasa potomna dla klasy Baza, zawiera funkcje, które odpowiedzialne są za edycję, 
+* dodawanie, usuwanie, walidację danych związanych z zawodami sportowymi.
+* @author Marta Chmura, Dawid Piask
+* @version 1.1
+*/
 
 class Tournament extends Baza {
-/*******************************************************/
 
-	/*******************************************************/
+	/**
+	* function showAll
+	* Funkcja zwraca listę turniejów, które są w bazie danych w zależności od podanego parametru oraz daty dzisiejszej
+	*
+	* @param string $status - typ turnieju jaki wyszukujemy (aktywny, zakończony)
+	*						  w przypadku braku parametru - funkcja zwróci wszystkie turnieje z bazy
+	* @return array - tablica z danymi turniejów
+	*/
 	function showAll($status) {
 		$currentDate = date('Y-m-d');
 		
@@ -24,8 +34,16 @@ class Tournament extends Baza {
 		return $row;
 	}
 	
-	/*******************************************************/
+	/**
+	* function showTournamentData
+	* Funkcja wyświetla listę z podstawowymi danymi dotyczącymi turniejów
+	*
+	* @param array $data - tablica zawierające dane dot. turniejów
+	* @param string $status - status turnieju (aktywny, zakończony)
+	* @return 0
+	*/
 	function showTournamentData($data, $status) {
+		//w zależności od statusu wyświetlamy odpowiednią informację
 		if($status == 'active')
 			$msg = 'Aktywne i przyszłe turnieje';
 		elseif($status == 'past')
@@ -40,11 +58,11 @@ class Tournament extends Baza {
 		$total = count($data);
 		
 		foreach ($data as $key => $tournament) {	
-			
+			//dla każdego pierwszego elementu z trzech otwieramy diva "wierszowego"
 			if($i%3 == 0) {
 				echo '<div class="row">';	
 			}
-
+			//nawiązujemy połączenie i pobieramy nazwę kraju goszczącego zawody
 			$temp = new Country($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);	
 			$hostCountry = $temp->getCountryData($tournament['kraj']);
 			
@@ -57,7 +75,7 @@ class Tournament extends Baza {
 				</div>
 				
 			';
-			
+			//dla 3. (oraz jego krotności) lub ostatniego elementu z tablicy zamykamy div "wierszowy"
 			if(($i%3 == 2) || $i == ($total-1)) {
 				echo '
 					</div>	
@@ -68,7 +86,15 @@ class Tournament extends Baza {
 		}
 	}
 	
-	/*******************************************************/
+	/**
+	* function showTournamentForm
+	* Funkcja wyświetla formularz dot. turniejów, w zależności od akcji (addTournament, addGame)
+	* generuje formularz z innymi parametrami
+	*
+	* @param array $data - tablica zawierające dane do wyświetlenia w formularzu
+	* @param string $action - akcja wybrana w formularzu  (addTournament, addGame)
+	* @return 0
+	*/
 	function showTournamentForm($data, $action) {
 		if($action == 'addTournament') {
 			$type = 'tournament';
@@ -79,21 +105,21 @@ class Tournament extends Baza {
 			$update = 'insert';
 		}
 		
-		
+		//$selectedCountry przypisujemy NULL, jeśli $data nie było puste przepisujemy jego wartość
 		$selectedCountry = NULL;
 		if(!empty($data['tournamentCountry']))
 			$selectedCountry = $data['tournamentCountry'];
-		
+		//wyświetlamy formularz, jeśli $data nie było puste, to uzupełniamy pola danymi
 		echo '
 						<form role="form" action="admin-games.php" method="post">
 						
 							<div class="form-group">
 								<label for="tournamentName">Nazwa turnieju:</label>
-								<input type="text" class="form-control" name="tournamentName" value="'.$data['tournamentName'].'">
+								<input type="text" class="form-control" name="tournamentName" id="tournamentName" value="'.$data['tournamentName'].'">
 							</div>
 							<div class="form-group">
 								<label for="tournamentClass">Klasa turnieju:</label>
-								<select name="tournamentClass" class="form-control">
+								<select name="tournamentClass" id="tournamentClass" class="form-control">
 									<option value="none"'; if($data['tournamentClass'] == 'none') { echo ' selected'; } echo '>---</option>
 									<option value="European Championship"'; if($data['tournamentClass'] == 'European Championship') { echo ' selected'; } echo '>European Championship</option>
 									<option value="World Championship"'; if($data['tournamentClass'] == 'World Championship') { echo ' selected'; } echo '>World Championship</option>
@@ -102,24 +128,25 @@ class Tournament extends Baza {
 							</div>
 							<div class="form-group">
 								<label for="tournamentDateStart">Data startu:</label>
-								<input type="date" class="form-control" name="tournamentDateStart" value="'.$data['tournamentDateStart'].'">
+								<input type="date" class="form-control" id="tournamentDateStart" name="tournamentDateStart" value="'.$data['tournamentDateStart'].'">
 							</div>
 							<div class="form-group">
 								<label for="tournamentDateEnd">Data końca:</label>
-								<input type="date" class="form-control" name="tournamentDateEnd" value="'.$data['tournamentDateEnd'].'">
+								<input type="date" class="form-control" id="tournamentDateEnd" name="tournamentDateEnd" value="'.$data['tournamentDateEnd'].'">
 							</div>
 							<div class="form-group">
 								<label for="tournamentCity">Miasto:</label>
-								<input type="text" class="form-control" name="tournamentCity" value="'.$data['tournamentCity'].'">
+								<input type="text" class="form-control" id="tournamentCity" name="tournamentCity" value="'.$data['tournamentCity'].'">
 							</div>
 							<div class="form-group">
 								<label for="tournamentCountry">Kraj:</label>
-								<select name="tournamentCountry" class="form-control">
+								<select name="tournamentCountry" id="tournamentCountry" class="form-control">
 									<option value="none">---</option>
 			';
+			//nawiązujemy nowe połączenie i pobieramy liste wszystkich krajów
 			$temp = new Country($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);	
 			$countryList = $temp->getCountries();
-
+			//wyświetlamy listę i jeśli dany kraj odpowiada $selectedCountry - oznaczamy jako 'selected'
 			foreach($countryList as $country) {
 								echo '
                                    <option value="'.$country['id_kraj'].'"'; 
@@ -133,13 +160,6 @@ class Tournament extends Baza {
 							<input type="hidden" class="form-control" name="formType" value="'.$type.'">
 							<input type="hidden" class="form-control" name="updateType" value="'.$update.'">
 			';
-							/*
-							<div class="form-group">
-								<input type="hidden" class="form-control" name="formType" value="association">
-								<input type="hidden" class="form-control" name="playerID" value="'.$data['id_zawodnik'].'">
-								<input type="hidden" class="form-control" name="teamID" value="'.$id_team.'">
-							</div> */
-							
 			echo '				
 							
 							<button type="submit" name="submit" class="btn btn-success">Zapisz</button>
@@ -148,7 +168,14 @@ class Tournament extends Baza {
 		';
 	}
 	
-	/*******************************************************/
+	/**
+	* function validate
+	* Funkcja sprawdza czy wybrane pola formularza nie są puste
+	*
+	* @param array $data - tablica zawierające dane do sprawdzenia
+	* @param string $formType - typ formularza
+	* @return 0
+	*/
 	function validate($data, $formType) {
 		$flag = 0;
 		if($formType == 'tournament') {
@@ -161,7 +188,7 @@ class Tournament extends Baza {
 					
 				}
 			}
-			
+			//jeśli jest ustawiona flaga - znaczy został wykryty błąd i pokazujemy jeszcze raz formularz z danymi
 			if($flag)
 				$this->showTournamentForm($data, 'addTournament');
 			else 
@@ -170,7 +197,13 @@ class Tournament extends Baza {
 		
 	}
 
-	/*******************************************************/
+	/**
+	* function showAllGames
+	* Funkcja wyświetla dane wszystkich meczy z danego turnieju
+	*
+	* @param string $id - ID turnieju
+	* @return 0
+	*/
 	function showAllGames($id) {
 		$sql = 'SELECT * FROM mecz where id_turniej='.$id;
 		
@@ -185,25 +218,34 @@ class Tournament extends Baza {
 		
 	}
 	
-	/*******************************************************/
+	/**
+	* function showGameInfo
+	* Funkcja wyświetla dane meczu
+	*
+	* @param array $game - tablica zawierające dane dotyczące danego meczu
+	* @return 0
+	*/
 	function showGameInfo($game) {
 			$id_mecz = $game['id_mecz'];
 			$id_team_1 = $game['id_druzyna_1'];
 			$id_team_2 = $game['id_druzyna_2'];
 			
-			
+			//pobieramy dane statystyczne danego meczu
 			$sql = 'select * from game_end_stat where id_mecz='.$id_mecz;
 			$stmt = $this->pdo->query($sql);	
 			$gameStats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 			$stmt->closeCursor();
 			
+			//pobieramy pełne nazwy drużyn biorących udział w meczu
 			$druzyna = new Team($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);
 			$teamName1 = $druzyna->getTeamName($id_team_1);
 			$teamName2 = $druzyna->getTeamName($id_team_2);
 			
+			//wyliczamy sumę punktów zdobytych
 			$suma1 = $this->getTotalPoints($id_mecz, $id_team_1);
 			$suma2 = $this->getTotalPoints($id_mecz, $id_team_2);
 			
+			//pobieramy status meczu
 			$status = $this->getGameStatus($game['status']);
 			
 			echo '
@@ -238,6 +280,7 @@ class Tournament extends Baza {
 						<th>End 9</th>
 						<th>End 10</th>
 			';	
+				//jeśli nie jest pusta wartość od 11 endu wyświetlamy dodatkową kolumnę
 				if(!empty($gameStats[0]['end_11'])) {
 					echo '
 						<th>End 11</th>
@@ -249,6 +292,7 @@ class Tournament extends Baza {
 					<tr>
 						<td><a href="team.php?id_team='.$id_team_1.'">'.$teamName1.'</a></td>
 			';
+			//jeśli drużyna #1 zdobyła hammera/wygrała LSD wyświetlamy * oraz odleglość
 			if($id_team_1 == $game['hammer']) {
 				echo '
 						<td>* / '.$game['LSD'].'cm</td>
@@ -276,7 +320,7 @@ class Tournament extends Baza {
 					<tr>
 						<td><a href="team.php?id_team='.$id_team_2.'">'.$teamName2.'</a></td>
 			';
-			
+			//jeśli drużyna #2 zdobyła hammera/wygrała LSD wyświetlamy * oraz odleglość
 			if($id_team_2 == $game['hammer']) {
 				echo '
 						<td>* / '.$game['LSD'].'cm</td>
@@ -308,7 +352,14 @@ class Tournament extends Baza {
 	
 	}
 	
-	/*******************************************************/
+	/**
+	* function getTotalPoints
+	* Funkcja wylicza ilość punktów zdobytych w danym meczu przez daną drużynę
+	*
+	* @param string $id_game - ID meczu
+	* @param string $id_team - ID drużyny
+	* @return integer $suma - suma zdobytych punktów
+	*/
 	function getTotalPoints($id_game, $id_team) {
 		$sql = 'select end_1, end_2, end_3, end_4, end_5, end_6, end_7, end_8, end_9, end_10, end_11 from game_end_stat where id_mecz='.$id_game.' and id_druzyna='.$id_team;
 		$stmt = $this->pdo->query($sql);	
@@ -329,7 +380,13 @@ class Tournament extends Baza {
 		return $suma;
 	}
 	
-	/*******************************************************/
+	/**
+	* function getGameStatus
+	* Funkcja zwraca słowny opis (live, running)
+	*
+	* @param integer $status - ID statusu
+	* @return string $suma - słowny opis
+	*/
 	function getGameStatus($status) {
 		$sql = 'select opis from status where id_status='.$status;
 		$stmt = $this->pdo->query($sql);	
@@ -338,7 +395,13 @@ class Tournament extends Baza {
 		return $row[0];
 	}
 	
-	/*******************************************************/
+	/**
+	* function getGamesWithStatus
+	* Funkcja wyświetla wszystkie mecze o podanym statusie (live lub running)
+	*
+	* @param string $status - nazwa statusu
+	* @return 0
+	*/
 	function getGamesWithStatus($status) {
 		if($status == 'live')
 			$id_status = 1;

@@ -1,8 +1,19 @@
 <?php 
-/*****************************************************************************************/
+/**
+* Player - klasa potomna dla klasy Baza, zawiera funkcje, które odpowiedzialne są za edycję, 
+* dodawanie, usuwanie, walidację danych związanych z zawodnikami.
+* @author Marta Chmura, Dawid Piask
+* @version 1.1
+*/
+
 class Player extends Baza {
 	
-	/*******************************************************/
+	/**
+	* function selectAll
+	* Funkcja zwraca listę wszystkich zawodników z bazy danych.
+	*
+	* @return array $row - tablica asocjacyjna z danymi wszystkich zawodników z bazy danych.
+	*/
 	function selectAll() {
 		$stmt = $this->pdo->query('SELECT * FROM zawodnik');
 		$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -10,6 +21,13 @@ class Player extends Baza {
 		return $row;
 	}
     
+	/**
+	* function getName
+	* Funkcja zwraca imię i nazwisko zawodnika o podanym ID.
+	*
+	* @param integer $id - ID zawodnika.
+	* @return array $row- tablica asocjacyjna z danymi zawodnika.
+	*/
     function getName($id) {
 		$stmt = $this->pdo->query('SELECT imie, nazwisko FROM zawodnik where id_zawodnik='.$id);
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -17,12 +35,18 @@ class Player extends Baza {
 		return $row;
 	}
 	
-	/*******************************************************/
+	/**
+	* function selectPlayer
+	* Funkcja wyświetla dane zawodnika o podanym ID.
+	*
+	* @param integer $id - ID zawodnika.
+	* @return 0
+	*/
 	function selectPlayer($id) {
 		$stmt = $this->pdo->query('select * from zawodnik where id_zawodnik='.$id);
 		
 		foreach ($stmt as $row) {
-			
+			//jeśli pole photo zawiera obrazek - przypisujemy go pod zmienną $src, w innym przypadku ustawiamy ogólny obrazek
 			if($row['photo']) $src = 'img/av/'.$row['photo'];
 				else $src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAACMCAYAAACuwEE+AAACeklEQVR4nO3YMXKjWBRA0d7/UsjISMjIFCpnCWyBjmA0GnW5b5U9bdQnOFXCyPVVfpcP8o9t23b4XT/+9AfgWgRDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIXmLYKZp2odheHnufr/vwzDsy7KcP1vXdR+G4bSu67de7zu5fDCPg3h1fhzH/wxwHMd9nudz+OM4ftv1vpvLBvN41R5Den7PsiznbnAM8NgBbrfbvm3bfrvd9mEY9vv9fp47hrssy3nuK9b703/Dvy6Y40p9dYs4Bvx8i3ge2HF8DHSe5/O28RjPV613NZcN5tGrAU7TtM/zfA7yVwN83gG27ePbzmevdyVvGcwxpHVdPxzgqyv+2GWO3eWr17uStwzmOH42TdOHzxTH+eM55dWzxmeudzVvGcyj5yt+27Z/7R7P31rGcTyPH19/1XpX81cG86v/izx+K9q2f3aDx9/9zPWu6C2C4f8jGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQ/ARf9kfKnj/wOwAAAABJRU5ErkJggg==';
 			
@@ -40,16 +64,27 @@ class Player extends Baza {
 		}
 		$stmt->closeCursor();
 	}
-
-	/*******************************************************/
+	
+	/**
+	* function numberOfPlayers
+	* Funkcja zwraca liczbę wszystkich zawodników w bazie danych.
+	*
+	* @return string $row[0] - liczba zawodników.
+	*/
 	function numberOfPlayers() {
 		$stmt = $this->pdo->query('select count(*) from zawodnik');
 		$rows = $stmt->fetch(PDO::FETCH_NUM);
-		return $rows[0];
 		$stmt->closeCursor();
+		return $rows[0];
 	}
 	
-	/*******************************************************/
+	/**
+	* function selectSurnames
+	* Funkcja zwraca i wyświetla listę wszystkich zawodników w bazie danych.
+	*
+	* @param string $param - parametr charakteryzujący czy jest to widok do przeglądania danych czy do ich edycji
+	* @return string $row[0] - liczba zawodników.
+	*/
 	function selectSurnames($param) {
 		$stmt = $this->pdo->query('SELECT id_zawodnik, imie, nazwisko, photo FROM zawodnik');
 		$i = 0;
@@ -59,7 +94,7 @@ class Player extends Baza {
 			if($i%3) { 
 				//echo '<div class="row">';
 			}
-			
+			//jeśli pole photo zawiera obrazek - przypisujemy go pod zmienną $src, w innym przypadku ustawiamy ogólny obrazek
 			if($row['photo']) $src = 'img/av/'.$row['photo'];
 				else $src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAACMCAYAAACuwEE+AAACeklEQVR4nO3YMXKjWBRA0d7/UsjISMjIFCpnCWyBjmA0GnW5b5U9bdQnOFXCyPVVfpcP8o9t23b4XT/+9AfgWgRDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIXmLYKZp2odheHnufr/vwzDsy7KcP1vXdR+G4bSu67de7zu5fDCPg3h1fhzH/wxwHMd9nudz+OM4ftv1vpvLBvN41R5Den7PsiznbnAM8NgBbrfbvm3bfrvd9mEY9vv9fp47hrssy3nuK9b703/Dvy6Y40p9dYs4Bvx8i3ge2HF8DHSe5/O28RjPV613NZcN5tGrAU7TtM/zfA7yVwN83gG27ePbzmevdyVvGcwxpHVdPxzgqyv+2GWO3eWr17uStwzmOH42TdOHzxTH+eM55dWzxmeudzVvGcyj5yt+27Z/7R7P31rGcTyPH19/1XpX81cG86v/izx+K9q2f3aDx9/9zPWu6C2C4f8jGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQ/ARf9kfKnj/wOwAAAABJRU5ErkJggg==';
 			
@@ -68,7 +103,8 @@ class Player extends Baza {
 						<img src="'.$src.'" style="width: 140px; height: 140px;" class="img-circle" data-src="holder.js/140x140" alt="140x140">
 						<h2><a href="?id_player='.$row['id_zawodnik'].'&amp;action='.$param.'">'.$row['imie'].' '.$row['nazwisko'].'</a></h2>
 						<p><!--Donec sed odio dui.--></p>
-			';		
+			';
+			//jeśli jest parametr świadczący o edycji, to zmieniamy URL
 			if($param == 'edit') {
 				echo '
 						<p><a class="btn btn-default" href="?id_player='.$row['id_zawodnik'].'&amp;action='.$param.'" role="button">Edytuj dane »</a></p>
@@ -88,15 +124,23 @@ class Player extends Baza {
 				//echo '</div>';
 			}
 			
-			//echo '<a href="?id_player='.$row['id_zawodnik'].'">'.$row['imie'].' '.$row['nazwisko'].'</a><br />';
 			$i++;
 		}
 		$stmt->closeCursor();
 	}
 	
+	/**
+	* function editSinglePlayer
+	* Funkcja pobiera dane dotyczące zawodnika, formatuje je i przekazuje do wyświetlenia w postaci formularza
+	*
+	* @param string $id - ID szukanego zawodnika
+	* @param string $param - parametr decydujący o edycji lub 
+	* @return 0
+	*/
 	function editSinglePlayer($id, $param) {
 		// call for data from database
 		$stmt = $this->pdo->query('select * from zawodnik where id_zawodnik='.$id);
+		//pobieramy listę krajów z bazy
 		$countryList = $this->getCountries();
 		
 		foreach ($stmt as $row) {
@@ -116,22 +160,25 @@ class Player extends Baza {
 			$player['idPlayer'] = $id;
 			$player['fileInput'] = $src;
 			
+			//przekazujemy dane do wyświetlania
 			$this->showPlayerForm($player);
 	
 		}
 		$stmt->closeCursor();
 	}
 
-	/****************************************************************/
-	/* function showPlayerForm($player)
-	/* 
-	/* if $player (array) is not provided function will simply output
-	/* a form with empty fields to fill out
-	/****************************************************************/
+	/**
+	* function showPlayerForm
+	* Funkcja wyświetla dane zawodnika w postaci formularza dane 
+	*
+	* @param array $player - tablica zawierająca wcześniej przygotowane dane dot. zawodnika
+	* @return 0
+	*/
 	function showPlayerForm($player) {
-		
+		//ustawiamy defautlowy obrazek w przypadku gdyby nie było przekazane zdjęcie zawodnika
 		$src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAACMCAYAAACuwEE+AAACeklEQVR4nO3YMXKjWBRA0d7/UsjISMjIFCpnCWyBjmA0GnW5b5U9bdQnOFXCyPVVfpcP8o9t23b4XT/+9AfgWgRDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIXmLYKZp2odheHnufr/vwzDsy7KcP1vXdR+G4bSu67de7zu5fDCPg3h1fhzH/wxwHMd9nudz+OM4ftv1vpvLBvN41R5Den7PsiznbnAM8NgBbrfbvm3bfrvd9mEY9vv9fp47hrssy3nuK9b703/Dvy6Y40p9dYs4Bvx8i3ge2HF8DHSe5/O28RjPV613NZcN5tGrAU7TtM/zfA7yVwN83gG27ePbzmevdyVvGcwxpHVdPxzgqyv+2GWO3eWr17uStwzmOH42TdOHzxTH+eM55dWzxmeudzVvGcyj5yt+27Z/7R7P31rGcTyPH19/1XpX81cG86v/izx+K9q2f3aDx9/9zPWu6C2C4f8jGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQ/ARf9kfKnj/wOwAAAABJRU5ErkJggg==';
-	
+		
+		//nie została przekazana pusta tablica player - wyświetlamy niepusty formularz
 		if(!empty($player)) {
 			$name = $player['nameInput'];
 			$surname = $player['surnameInput'];
@@ -143,7 +190,7 @@ class Player extends Baza {
 			$idPlayer = $player['idPlayer'];
 		}
 		else $name = $surname = $birth = '';
-		
+		//pobieramy listę krajów
 		$countryList = $this->getCountries();
 		
 			echo '
@@ -222,7 +269,7 @@ class Player extends Baza {
 						
 				</div>	
 			';
-		
+			//jeśli nie jest to formularz dodania zawodnika - pokazujemy opcję usunięcia zawodnika z bazy
 			if($_GET['action'] != 'add') {
 			echo ' <div class="col-lg-4">';
 			echo '
@@ -237,11 +284,13 @@ class Player extends Baza {
 	
 	}
 	
-	/****************************************************************/
-	/* function validate($player)
-	/* 
-	/* $player must me provided
-	/****************************************************************/
+	/**
+	* function validate
+	* Funkcja sprawdza czy wybrane pola formularza nie są puste
+	*
+	* @param array $player - tablica zawierające dane do sprawdzenia
+	* @return 0
+	*/
 	function validate($player) {
 
 		$flag = 0;
@@ -260,38 +309,51 @@ class Player extends Baza {
 			$this->updatePlayer($player);
 	}
 	
-	/****************************************************************/
-	/* function updatePlayer($player)
-	/* 
-	/* $player must me provided
-	/****************************************************************/
+	/**
+	* function updatePlayer
+	* Funkcja w zależności od przekazywanych danych - edytuje bądź dodaje dane dotyczące zawodnika
+	*
+	* @param array $player - tablica zawierające dane zawodnika
+	* @return 0
+	*/
 	function updatePlayer($player) {
 	
-
+		//jeśli nie jest puste idPlayer, to oznacza to, że dodajemy nowego zawodnika
 		if(empty($player['idPlayer']))
 			$action = 'insert';
 		else 
 			$action = 'edit'; 
-			
+		//tworzenie skróconych nazw	
 		$name = $player['nameInput'];
 		$surname = $player['surnameInput'];
-		
 		$birth = $player['birthdayInput'];
 		$delivery = $player['deliveryInput'];
 		$sex = $player['sexInput'];
+		//jeśli nie został wybrany kraj z listy
 		if($player['countryInput'] == 'none') 
-			$playerCountry = 'NULL';
+			$playerCountry = NULL;
 		else
-			$playerCountry = '\''.$player['countryInput'].'\'';
+			$playerCountry = $player['countryInput'];
 		$idPlayer = $player['idPlayer'];
 		
-		
+		//dodajemy zawodnika do bazy
 		if($action == 'insert') {
 			try {
+				/*
 				$sql = 'insert into zawodnik (`imie`, `nazwisko`, `data_ur`, `plec`, `kierunek`, `id_kraj`) values (\''.$name.'\', \''.$surname.'\', \''.$birth.'\', \''.$sex.'\', \''.$delivery.'\', '.$playerCountry.')';
-				//echo $sql; 
 				$result = $this->pdo->exec($sql);
-				if($result > 0) {
+				*/
+				
+				$result = $this->pdo->prepare('insert into zawodnik (`imie`, `nazwisko`, `data_ur`, `plec`, `kierunek`, `id_kraj`) values (:imie, :nazwisko, :data_ur, :plec, :kierunek, :id_kraj)');
+				$result->bindValue(':imie', $name, PDO::PARAM_STR);
+				$result->bindValue(':nazwisko', $surname, PDO::PARAM_STR);
+				$result->bindValue(':data_ur', $birth, PDO::PARAM_STR);
+				$result->bindValue(':plec', $sex, PDO::PARAM_STR);
+				$result->bindValue(':kierunek', $delivery, PDO::PARAM_STR);
+				$result->bindValue(':id_kraj', $playerCountry, PDO::PARAM_STR);
+				$sucess = $result->execute();
+				//zapytanie zostalo wykonanie poprawnie
+				if($sucess) {
 					echo '
 					<div class="alert alert-success">Pomyślnie dodano zawodnika: '.$name.' '.$surname.'</div>
 					';
@@ -309,13 +371,23 @@ class Player extends Baza {
 			}
 			
 
-		}		
+		}	//edytujemy zawodnika
 		elseif($action == 'edit') {
 			try {
+				/*
 				$sql = 'update  zawodnik set `imie`=\''.$name.'\', `nazwisko`=\''.$surname.'\', `data_ur`=\''.$birth.'\', `plec`=\''.$sex.'\', `kierunek`=\''.$delivery.'\', `id_kraj`='.$playerCountry.' where id_zawodnik='.$idPlayer;
-				//echo $sql;
 				$result = $this->pdo->exec($sql);
-				if($result > 0) {
+				*/
+				$result = $this->pdo->prepare('update zawodnik set `imie`= :imie, `nazwisko`= :nazwisko, `data_ur`= :data_ur, `plec`= :plec, `kierunek` = :kierunek, `id_kraj` = :id_kraj where id_zawodnik= :id_zawodnik');
+				$result->bindValue(':imie', $name, PDO::PARAM_STR);
+				$result->bindValue(':nazwisko', $surname, PDO::PARAM_STR);
+				$result->bindValue(':data_ur', $birth, PDO::PARAM_STR);
+				$result->bindValue(':plec', $sex, PDO::PARAM_STR);
+				$result->bindValue(':kierunek', $delivery, PDO::PARAM_STR);
+				$result->bindValue(':id_kraj', $playerCountry, PDO::PARAM_STR);
+				$result->bindValue(':id_zawodnik', $idPlayer, PDO::PARAM_STR);
+				$sucess = $result->execute();
+				if($sucess) {
 					echo '
 					<div class="alert alert-success">Pomyślnie edytowano zawodnika: '.$name.' '.$surname.'</div>
 					';
@@ -342,15 +414,23 @@ class Player extends Baza {
 		
 	}
 	
+	/**
+	* function confirmRemovePlayer
+	* Funkcja wyświetla prośbę o potwierdzenie chęci usunięca zwodnika z bazy danych lub odsyła do funkcji usuwającej dane
+	*
+	* @param string $id_player - ID zawodnika
+	* @param string $confirm - istnieje potwierdzenie usunięcia
+	* @return 0
+	*/
 	function confirmRemovePlayer($id_player, $confirm) {
-		
+		//jeśli wartość $confirm jest różna od '1' wyświetla dane
 		if($confirm != '1') {
 			$this->selectPlayer($id_player);
 			echo '
 				<div class="col-lg-4">
 					<p>Czy na pewno <strong>chcesz usunąć</strong> tego zawodnika?</p>
 					<p><strong>Uwaga:</strong> zostaną także usunięte dane dotyczące użytkownika oraz jego powiązań z drużynami w których grał. Może to skutkować niepełnymi danymi w innych wynikach.</p>
-					<a type="button" href="?action=delete&amp;id_player='.$id_player.'&confirm=1" class="btn btn-danger">Usuń (brak cofnięcia akcji)</a>
+					<a type="button" href="?action=delete&amp;id_player='.$id_player.'&amp;confirm=1" class="btn btn-danger">Usuń (brak cofnięcia akcji)</a>
 					<a type="button" href="?action=edit&amp;id_player='.$id_player.'" class="btn btn-default">Anuluj</a>
 				</div>';
 		}	
@@ -359,6 +439,13 @@ class Player extends Baza {
 		}
 	}		
 	
+	/**
+	* function removePlayer
+	* Funkcja sprawdza czy zawodnik jest powiązany z jakimiś drużynami, które w razie potrzeby również usuwa, po czym usuwa dane zawodnika z bazy
+	*
+	* @param string $id_player - ID zawodnika
+	* @return 0
+	*/
 	function removePlayer($id_player) {
 	
 		// check if player was/is participating in any teams
@@ -366,13 +453,17 @@ class Player extends Baza {
 		$stmt = $this->pdo->query($try_sql);
 		$row = $stmt->fetch(PDO::FETCH_NUM);
 		
-		
+		//zawodnik jest przypisany do druzyny, w takim wypadku musimy usunąć powiązania
 		if($row[0] >= 1) {
 			try {
+				/*
 				$sql = 'delete from zawodnik_druzyna where id_zawodnik='.$id_player;
-				//echo $sql;
 				$result = $this->pdo->exec($sql);
-				if($result > 0) {
+				*/
+				$result = $this->pdo->prepare('delete from zawodnik_druzyna where id_zawodnik= :id_zawodnik');
+				$result->bindValue(':id_zawodnik', $id_player, PDO::PARAM_STR);
+				$sucess = $result->execute();
+				if($sucess) {
 					echo '
 					<div class="alert alert-success">Pomyślnie usunięto powiązania zawodnika z drużynami.</div>
 					';
@@ -395,13 +486,17 @@ class Player extends Baza {
 		
 		$stmt = $this->pdo->query($try_sql);
 		$row = $stmt->fetch(PDO::FETCH_NUM);
-		
+		//zapytanie zwrociło nam zawodnika
 		if($row[0] >= 1) {
 			try {
+				/*
 				$sql = 'delete from zawodnik where id_zawodnik='.$id_player;
-				//echo $sql;
 				$result = $this->pdo->exec($sql);
-				if($result > 0) {
+				*/
+				$result = $this->pdo->prepare('delete from zawodnik where id_zawodnik= :id_zawodnik');
+				$result->bindValue(':id_zawodnik', $id_player, PDO::PARAM_STR);
+				$sucess = $result->execute();
+				if($sucess) {
 					echo '
 					<div class="alert alert-success">Pomyślnie usunięto zawodnika.</div>
 					';
@@ -427,6 +522,13 @@ class Player extends Baza {
 		
 	}
 	
+	/**
+	* function searchPlayer
+	* Funkcja wyszukuje (po kolumnie 'nazwisko'), który zawodnik jest zgodny z wyszukiwanym ciągiem znaków
+	*
+	* @param string $input - wyszukiwana nazwa
+	* @return 0
+	*/
 	function searchPlayer($input) {
 		$sql = 'select id_zawodnik from zawodnik where nazwisko like \'%'.$input.'%\'';
 		
@@ -435,18 +537,19 @@ class Player extends Baza {
 		$stmt->closeCursor();
 
 		$i = 0;
+		//ilość rezultatów
 		$total = count($row);
-		
+		//dla znalezionych rezultatów wyświetlamy
 		foreach($row as $key => $value) {
-			
+			//dla każdego pierwszego elementu z trzech otwieramy diva "wierszowego"
 			if($i%3 == 0) {
 				echo '<div class="row">';	
 			}
-			
+			//wywołujemy funkcję odpowiadającą za wyświetlanie danych o zadanym ID zawodnika
 			echo '<div class="col-lg-4">';
 			$this->selectPlayer($value['id_zawodnik']);
 			echo '</div>';
-			
+			//dla 3. (oraz jego krotności) lub ostatniego elementu z tablicy zamykamy div "wierszowy"
 			if(($i%3 == 2) || $i == ($total-1)) {
 				echo '
 					</div>	

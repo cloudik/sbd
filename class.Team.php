@@ -1,11 +1,20 @@
 <?php
 
-
-	
-/*****************************************************************************************/
+/**
+* Team - klasa potomna dla klasy Baza, zawiera funkcje, które odpowiedzialne są za edycję, 
+* dodawanie, usuwanie, walidację danych związanych z drużynami.
+* @author Marta Chmura, Dawid Piask
+* @version 1.1
+*/
 
 class Team extends Baza {
-/*******************************************************/
+	
+	/**
+	* function selectAll
+	* Funkcja zwraca listę wszystkich drużyn z bazy danych.
+	*
+	* @return array $row - tablica asocjacyjna z danymi wszystkich drużyn z bazy danych.
+	*/
 	function selectAll() {
 		$stmt = $this->pdo->query('SELECT * FROM druzyna');
 		//$stmt = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -17,6 +26,12 @@ class Team extends Baza {
 		$stmt->closeCursor();
 	}
 	
+	/**
+	* function numberOfTeams
+	* Funkcja wyświetla ilość drużyn w bazie danych
+	*
+	* @return integer - ilość wierszy
+	*/
 	function numberOfTeams() {
 		$stmt = $this->pdo->query('select count(*) from druzyna');
 		$rows = $stmt->fetch(PDO::FETCH_NUM);
@@ -24,6 +39,13 @@ class Team extends Baza {
 		return $rows[0];
 	}
 	
+	/**
+	* function getTeamData
+	* Funkcja pobiera i zwraca dane drużyny o podanym ID
+	*
+	* @param integer $id_team - ID drużyny, której dane chcemy pobrać
+	* @return array $rows - tablica asocjacyjna z danymi drużyny
+	*/
 	function getTeamData($id_team) {
 		$stmt = $this->pdo->query('SELECT * FROM druzyna where id_druzyna='.$id_team);
 		$rows = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -31,6 +53,13 @@ class Team extends Baza {
 		return $rows;
 	}
 	
+	/**
+	* function getCurrentConnections
+	* Funkcja pobiera i zwraca jacy zawodnicy są powiązani nadal z daną drużyny względem dzisiejszej daty
+	*
+	* @param integer $id_team - ID drużyny, której dane chcemy pobrać
+	* @return array $rows - tablica asocjacyjna z danymi powiązanych zawodników
+	*/
 	function getCurrentConnections($id_team) {
 		$currentDate = date('Y-m-d');
 		$sql = 'SELECT * FROM zawodnik_druzyna where id_druzyna='.$id_team.' and data_do is NULL or data_do > \''.$currentDate.'\'';
@@ -40,6 +69,13 @@ class Team extends Baza {
 		return $rows;
 	}
 	
+	/**
+	* function getPastConnections
+	* Funkcja pobiera i zwraca jacy zawodnicy byli powiązani nadal z daną drużyny względem dzisiejszej daty
+	*
+	* @param integer $id_team - ID drużyny, której dane chcemy pobrać
+	* @return array $rows - tablica asocjacyjna z danymi powiązanych zawodników
+	*/
 	function getPastConnections($id_team) {
 		$currentDate = date('Y-m-d');
 		$sql = 'SELECT * FROM zawodnik_druzyna where id_druzyna='.$id_team.' and data_do < \''.$currentDate.'\'';
@@ -49,6 +85,13 @@ class Team extends Baza {
 		return $rows;
 	}
 	
+	/**
+	* function showTeamForm
+	* Funkcja wyświetla formularz z danymi drużyny, jeśli $team nie jest puste, w innym przypadku wyświetla formularz dodania drużyny
+	*
+	* @param array $team - dane drużyny do wyświetlenia
+	* @return 0
+	*/
 	function showTeamForm($team) {
         //szary defaultowy obrazek
 		$src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAACMCAYAAACuwEE+AAACeklEQVR4nO3YMXKjWBRA0d7/UsjISMjIFCpnCWyBjmA0GnW5b5U9bdQnOFXCyPVVfpcP8o9t23b4XT/+9AfgWgRDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIXmLYKZp2odheHnufr/vwzDsy7KcP1vXdR+G4bSu67de7zu5fDCPg3h1fhzH/wxwHMd9nudz+OM4ftv1vpvLBvN41R5Den7PsiznbnAM8NgBbrfbvm3bfrvd9mEY9vv9fp47hrssy3nuK9b703/Dvy6Y40p9dYs4Bvx8i3ge2HF8DHSe5/O28RjPV613NZcN5tGrAU7TtM/zfA7yVwN83gG27ePbzmevdyVvGcwxpHVdPxzgqyv+2GWO3eWr17uStwzmOH42TdOHzxTH+eM55dWzxmeudzVvGcyj5yt+27Z/7R7P31rGcTyPH19/1XpX81cG86v/izx+K9q2f3aDx9/9zPWu6C2C4f8jGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQ/ARf9kfKnj/wOwAAAABJRU5ErkJggg==';
@@ -134,34 +177,40 @@ class Team extends Baza {
 			}
 	}
 	
-	/****************************************************************/
-	/* function validate($team)
-	/* 
-	/* $team must me provided
-	/****************************************************************/
+	/**
+	* function validate
+	* Funkcja sprawdza czy wybrane pola formularza nie są puste
+	*
+	* @param array $data - tablica zawierające dane do sprawdzenia
+	* @param string $formType - typ formularza
+	* @return 0
+	*/
 	function validate($team, $formType) {
+		//jesli formularz byl typu 'teamform' - dotyczacy tylko druzyny (opis, avatar, typ, zenska/meska)
 		if($formType == 'teamform') {
 			$flag = 0;
 			foreach ($team as $key => $value) {
+				//sprawdzamy czy przekazywane pola nie są puste (nie dotyczy teamID, które może być puste w przypadku dodawania nowej drużyny)
 				if(empty($value) && ($key !='teamID')) {
 					echo '
 						<div class="alert alert-danger">Wartość <strong>'.$key.'</strong> nie została wypełniona</div>
 					';
 					$flag = 1;
 				}
-			}
+			} //jeśli flaga z błędem została ustawiona - wyświetl ponownie formularz z danymi
 			if($flag) {
 				$this->showTeamForm($team);
-			}
+			} //update danych dotyczących drużyny
 			else
 				$this->updateTeam($team);
 		}		
+		//jesli formularz byl typu 'association' - dotyczy powiazan zawodnikow z druzynami
 		if($formType == 'association') {
 			$flag = 0;
-			
+			//pomocnicze dane do wyświetlenia błędów - pobieramy imię i nazwisko zawodnika przy którego zapytaniu wystąpił błąd
 			$zawodnik = new Player($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);
 			$name = $zawodnik->getName($team['playerID']);
-			
+			//sprawdzamy czy przekazywane pola nie są puste (nie dotyczy dateFrom oraz position, które mogą być puste)
 			foreach ($team as $key => $value) {
 				
 					if((empty($value)) && (($key =='dateFrom') || ($key =='position'))) {
@@ -172,23 +221,36 @@ class Team extends Baza {
 						$flag = 1;
 					}
 
-			}
+			} //jeśli została ustawiona flaga błędu, to wyświetlamy ponownie formularz dla drużyny o zadanym ID
 			if($flag) {
 				$this->editTeamMembers($team['teamID']);
-			}
+			} //zmieniamy powiązania dla drużyny
 			else
 				$this->changeConnection($team);
 		}
 	}
-	/********************************************************************/
+	
+	/**
+	* function changeConnection
+	* Funkcja zmienia powiązania (w tym usunięcie) pomiędzy zawodnikiem a drużyną
+	*
+	* @param array $data - tablica zawierające dane do zmiany/usunięcia
+	* @return 0
+	*/
 	function changeConnection($data) {
-		//w formularzu istnialo pole "delete"
+		//w formularzu istnialo pole "delete", także dotyczy to usunięcie powiązania zawodnika z drużyną
 		if(isset($data['delete'])) {
 				try {
+					/*
 					$sql = 'delete from zawodnik_druzyna where id_zawodnik='.$data['playerID'].' and id_druzyna='.$data['teamID'];
 					$result = $this->pdo->exec($sql);
-					if($result > 0) {
-						
+					*/
+					$result = $this->pdo->prepare('delete from zawodnik_druzyna where id_zawodnik= :id_zawodnik and id_druzyna=:id_druzyna');
+					$result->bindValue(':id_zawodnik', $data['playerID'], PDO::PARAM_STR);
+					$result->bindValue(':id_druzyna', $data['teamID'], PDO::PARAM_STR);
+					$sucess = $result->execute();
+					if($sucess) {
+						//pomocnicze zmienne dla ładnego wyświetlenia alertu
 						$zawodnik = new Player($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);
 						$name = $zawodnik->getName($data['playerID']);
 					
@@ -214,26 +276,44 @@ class Team extends Baza {
 				try {
                     //w przypadku pustych pull - przypisanie wartosci NULL do zmiennych - poprawna forma zapytania SQL
 					if(empty($data['dateTo']))
-						$dateTo = 'NULL';
+						$dateTo = NULL;
 					else
-						$dateTo = '\''.$data['dateTo'].'\'';
+						$dateTo = $data['dateTo'];
 						
 					if($data['function'] == 'none') 
-						$function = 'NULL';
+						$function = NULL;
 					else
-						$function = '\''.$data['function'].'\'';	
+						$function = $data['function'];	
 					
 					
 					//check if this player is already in the team
 					$test = $this->connectionExists($data['teamID'], $data['playerID']);
 					
-					if($test) 
-						$sql = 'update  zawodnik_druzyna set `id_zawodnik`=\''.$data['playerID'].'\', `id_druzyna`=\''.$data['teamID'].'\', `data_od`=\''.$data['dateFrom'].'\', `data_do`='.$dateTo.', `pozycja`=\''.$data['position'].'\', `funkcja`='.$function.' where id_druzyna='.$data['teamID'].' and id_zawodnik='.$data['playerID'];
-					else 
-						$sql = 'insert into zawodnik_druzyna (`id_zawodnik`, `id_druzyna`, `data_od`, `data_do`, `pozycja`, `funkcja`) values (\''.$data['playerID'].'\', \''.$data['teamID'].'\', \''.$data['dateFrom'].'\', '.$dateTo.', \''.$data['position'].'\', '.$function.') ';	
-
-					$result = $this->pdo->exec($sql);
-					if($result > 0) {
+					if($test) {
+						//$sql = 'update  zawodnik_druzyna set `id_zawodnik`=\''.$data['playerID'].'\', `id_druzyna`=\''.$data['teamID'].'\', `data_od`=\''.$data['dateFrom'].'\', `data_do`='.$dateTo.', `pozycja`=\''.$data['position'].'\', `funkcja`='.$function.' where id_druzyna='.$data['teamID'].' and id_zawodnik='.$data['playerID'];
+						$result = $this->pdo->prepare('update zawodnik_druzyna set `id_zawodnik`= :id_zawodnik, `id_druzyna`= :id_druzyna, `data_od`= :data_od, `data_do`= :data_do, `pozycja` = :pozycja, `funkcja` = :funkcja where id_zawodnik= :id_zawodnik');
+						$result->bindValue(':id_zawodnik', $data['playerID'], PDO::PARAM_STR);
+						$result->bindValue(':id_druzyna', $data['teamID'], PDO::PARAM_STR);
+						$result->bindValue(':data_od', $data['dateFrom'], PDO::PARAM_STR);
+						$result->bindValue(':data_do', $dateTo, PDO::PARAM_STR);
+						$result->bindValue(':pozycja', $data['position'], PDO::PARAM_STR);
+						$result->bindValue(':funkcja', $function, PDO::PARAM_STR);
+						$result->bindValue(':id_zawodnik', $data['playerID'], PDO::PARAM_STR);
+						$sucess = $result->execute();
+					}	
+					else {
+						//$sql = 'insert into zawodnik_druzyna (`id_zawodnik`, `id_druzyna`, `data_od`, `data_do`, `pozycja`, `funkcja`) values (\''.$data['playerID'].'\', \''.$data['teamID'].'\', \''.$data['dateFrom'].'\', '.$dateTo.', \''.$data['position'].'\', '.$function.') ';	
+						$result = $this->pdo->prepare('insert into zawodnik_druzyna (`id_zawodnik`, `id_druzyna`, `data_od`, `data_do`, `pozycja`, `funkcja`) values (:id_zawodnik, :id_druzyna, :data_od, :data_do, :pozycja, :funkcja)');
+						$result->bindValue(':id_zawodnik', $data['playerID'], PDO::PARAM_STR);
+						$result->bindValue(':id_druzyna', $data['teamID'], PDO::PARAM_STR);
+						$result->bindValue(':data_od', $data['dateFrom'], PDO::PARAM_STR);
+						$result->bindValue(':data_do', $dateTo, PDO::PARAM_STR);
+						$result->bindValue(':pozycja', $data['position'], PDO::PARAM_STR);
+						$result->bindValue(':funkcja', $function, PDO::PARAM_STR);
+						$sucess = $result->execute();
+					}
+					//$result = $this->pdo->exec($sql);
+					if($sucess) {
 						$zawodnik = new Player($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);
 						$name = $zawodnik->getName($data['playerID']);
 						echo '
@@ -257,6 +337,14 @@ class Team extends Baza {
 			}
 	}
 	
+	/**
+	* function connectionExists
+	* Funkcja sprawdza i zwraca ilość powiązań zawodnika z drużyną
+	*
+	* @param string $id_team - ID drużyny
+	* @param string $id_player - ID zawodnika
+	* @return string $rows[0] - ilość powiązań
+	*/
 	function connectionExists($id_team, $id_player) {
 		$stmt = $this->pdo->query('select count(*) from zawodnik_druzyna where id_zawodnik='.$id_player.' and id_druzyna='.$id_team);
 		$rows = $stmt->fetch(PDO::FETCH_NUM);
@@ -264,32 +352,42 @@ class Team extends Baza {
 		return $rows[0];
 	}
 	
-	/****************************************************************/
-	/* function updatePlayer($team)
-	/* 
-	/* $team must me provided
-	/****************************************************************/
+	/**
+	* function updateTeam
+	* Funkcja dokonuje zmian dotyczących drużyny w bazie danych (edycja albo dodanie)
+	*
+	* @param array $team - dane dotyczące drużyny
+	* @return string $rows[0] - ilość powiązań
+	*/
 	function updateTeam($team) {
 	
-
+		//jeśli ID drużyny jest puste - oznacza to dodanie nowej drużyny
 		if(empty($team['teamID']))
 			$action = 'insert';
-		else 
+		//jeśli istnieje ID drużyny - oznacza to edycję już istniejącej drużyny
+		else
 			$action = 'edit'; 			
-
+		//przypisanie krótszych nazw
 		$teamName = $team['teamName'];
 		$teamCategory = $team['teamCategory'];
 		$teamSex = $team['teamSex'];
 		$teamPhoto = $team['teamPhoto'];
 		$teamID = $team['teamID'];
 		
-		
+		//dodajemy wpis o drużynie
 		if($action == 'insert') {
 			try {
+				/*
 				$sql = 'insert into druzyna (`nazwa`, `typ`, `plec`, `photo`) values (\''.$teamName.'\', \''.$teamCategory.'\', \''.$teamSex.'\', \''.$teamPhoto.'\')';
-				//echo $sql; 
 				$result = $this->pdo->exec($sql);
-				if($result > 0) {
+				*/
+				$result = $this->pdo->prepare('insert into druzyna (`nazwa`, `typ`, `plec`, `photo`) values (:nazwa, :typ, :plec, :photo)');
+				$result->bindValue(':nazwa', $teamName, PDO::PARAM_STR);
+				$result->bindValue(':typ', $teamCategory, PDO::PARAM_STR);
+				$result->bindValue(':plec', $teamSex, PDO::PARAM_STR);
+				$result->bindValue(':photo', $teamPhoto, PDO::PARAM_STR);
+				$sucess = $result->execute();
+				if($sucess) {
 					echo '
 					<div class="alert alert-success">Pomyślnie dodano zawodnika: '.$teamName.'</div>
 					';
@@ -307,13 +405,22 @@ class Team extends Baza {
 			}
 			
 
-		}		
+		}
+		//edytujemy wpis o drużynie
 		elseif($action == 'edit') {
 			try {
+				/*
 				$sql = 'update  druzyna set `nazwa`=\''.$teamName.'\', `typ`=\''.$teamCategory.'\', `plec`=\''.$teamSex.'\', `photo`=\''.$teamPhoto.'\' where id_druzyna='.$teamID;
-				//echo $sql;
 				$result = $this->pdo->exec($sql);
-				if($result > 0) {
+				*/
+				$result = $this->pdo->prepare('update  druzyna set `nazwa`=:nazwa, `typ`=:typ, `plec`=:plec, `photo`=:photo where id_druzyna=:id_druzyna');
+				$result->bindValue(':nazwa', $teamName, PDO::PARAM_STR);
+				$result->bindValue(':typ', $teamCategory, PDO::PARAM_STR);
+				$result->bindValue(':plec', $teamSex, PDO::PARAM_STR);
+				$result->bindValue(':photo', $teamPhoto, PDO::PARAM_STR);
+				$result->bindValue(':id_druzyna', $teamID, PDO::PARAM_STR);
+				$sucess = $result->execute();
+				if($sucess) {
 					echo '
 					<div class="alert alert-success">Pomyślnie edytowano zawodnika: '.$teamName.'</div>
 					';
@@ -333,30 +440,38 @@ class Team extends Baza {
 			
 		}
 			
-		
+		//link nawigacyjny
 		echo '
 			<div>Powrót do <a href="admin-teams.php">strony administracyjnej drużynami</a>.</div>
 		';
 		
 	}
 	
-	
+	/**
+	* function selectTeams
+	* Funkcja zwraca i wyświetla listę wszystkich drużyn w bazie danych.
+	*
+	* @param string $param - parametr charakteryzujący czy jest to widok do przeglądania danych czy do ich edycji
+	* @return 0
+	*/
 	function selectTeams($param) {
 		$stmt = $this->pdo->query('SELECT id_druzyna, nazwa, photo FROM druzyna');
 		$i = 0;
+		//dodatkowo pobieramy ile jest w sumie drużyn w bazie danych
 		$total_rows = $this->numberOfTeams();
 		
 		foreach($stmt as $row) {
 			if($i%3) { 
 				//echo '<div class="row">';
 			}
-			
+			//jeśli pole photo zawiera obrazek - przypisujemy go pod zmienną $src, w innym przypadku ustawiamy ogólny obrazek
 			if($row['photo']) $src = $row['photo'];
 				else $src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAACMCAYAAACuwEE+AAACeklEQVR4nO3YMXKjWBRA0d7/UsjISMjIFCpnCWyBjmA0GnW5b5U9bdQnOFXCyPVVfpcP8o9t23b4XT/+9AfgWgRDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIXmLYKZp2odheHnufr/vwzDsy7KcP1vXdR+G4bSu67de7zu5fDCPg3h1fhzH/wxwHMd9nudz+OM4ftv1vpvLBvN41R5Den7PsiznbnAM8NgBbrfbvm3bfrvd9mEY9vv9fp47hrssy3nuK9b703/Dvy6Y40p9dYs4Bvx8i3ge2HF8DHSe5/O28RjPV613NZcN5tGrAU7TtM/zfA7yVwN83gG27ePbzmevdyVvGcwxpHVdPxzgqyv+2GWO3eWr17uStwzmOH42TdOHzxTH+eM55dWzxmeudzVvGcyj5yt+27Z/7R7P31rGcTyPH19/1XpX81cG86v/izx+K9q2f3aDx9/9zPWu6C2C4f8jGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQ/ARf9kfKnj/wOwAAAABJRU5ErkJggg==';
 			
 			echo '
 					<div class="col-lg-4">
 						<img src="'.$src.'" style="width: 140px; height: 140px;" class="img-circle" data-src="holder.js/140x140" alt="140x140">';
+			//jeśli jest parametr świadczący o edycji, to zmieniamy URL
 			if($param == 'edit') {
 				echo '			
 						<h2><a href="?id_team='.$row['id_druzyna'].'&amp;action='.$param.'">'.$row['nazwa'].'</a></h2>
@@ -369,7 +484,7 @@ class Team extends Baza {
 						<h2><a href="?id_team='.$row['id_druzyna'].'">'.$row['nazwa'].'</a></h2>
 						<!--<p>Donec sed odio dui.</p>-->';
 			}
-			
+			//jeśli jest parametr świadczący o edycji, to zmieniamy URL
 			if($param == 'edit') {
 				echo '<a class="btn btn-default" href="?id_team='.$row['id_druzyna'].'&amp;action='.$param.'" role="button">Edytuj dane »</a></p>';
 			}
@@ -385,13 +500,19 @@ class Team extends Baza {
 			if($i%3 || $i == $total_rows) { 
 				//echo '</div>';
 			}
-			
-			//echo '<a href="?id_player='.$row['id_zawodnik'].'">'.$row['imie'].' '.$row['nazwisko'].'</a><br />';
+
 			$i++;
 		}
 		$stmt->closeCursor();
 	}
 	
+	/**
+	* function getTeamName
+	* Funkcja zwraca nazwę drużyny o podanym ID.
+	*
+	* @param integer $id - ID drużyny.
+	* @return string $row - nazwa drużyny
+	*/
 	function getTeamName($id) {
 		$stmt = $this->pdo->query('select nazwa from druzyna where id_druzyna='.$id);
 		$rows = $stmt->fetch(PDO::FETCH_NUM);
