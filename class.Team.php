@@ -520,17 +520,27 @@ class Team extends Baza {
 		return $rows[0];
 	}
 	
+	/**
+	* function selectSingleTeam
+	* Funkcja pobiera i wyświetla dane dotyczące pojedynczen drużyny; w tym jej nazwę, typ, kategorię wiekową,
+	* dodatkowo wyświetla też informację dotyczącą zawodników, którzy w niej występują lub występowali.
+	*
+	* @param integer $id - ID drużyny.
+	* @return 0
+	*/
 	function selectSingleTeam($id) {
-		
+		//pobieramy dane dot. drużyny
 		$team = $this->getTeamData($id);
+		//pobieramy dane dotyczące zawodników, którzy grają obecnie w drużynie
 		$currentPlayer = $this->getCurrentConnections($id);
+		//pobieramy dane dotyczące zawodników, którzy grali w przeszłości w drużynie
 		$pastPlayer = $this->getPastConnections($id);
-		
+		//jeśli pole photo zawiera obrazek - przypisujemy go pod zmienną $src, w innym przypadku ustawiamy ogólny obrazek
 		if(empty($team['photo'])) {
 			$src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAACMCAYAAACuwEE+AAACeklEQVR4nO3YMXKjWBRA0d7/UsjISMjIFCpnCWyBjmA0GnW5b5U9bdQnOFXCyPVVfpcP8o9t23b4XT/+9AfgWgRDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIXmLYKZp2odheHnufr/vwzDsy7KcP1vXdR+G4bSu67de7zu5fDCPg3h1fhzH/wxwHMd9nudz+OM4ftv1vpvLBvN41R5Den7PsiznbnAM8NgBbrfbvm3bfrvd9mEY9vv9fp47hrssy3nuK9b703/Dvy6Y40p9dYs4Bvx8i3ge2HF8DHSe5/O28RjPV613NZcN5tGrAU7TtM/zfA7yVwN83gG27ePbzmevdyVvGcwxpHVdPxzgqyv+2GWO3eWr17uStwzmOH42TdOHzxTH+eM55dWzxmeudzVvGcyj5yt+27Z/7R7P31rGcTyPH19/1XpX81cG86v/izx+K9q2f3aDx9/9zPWu6C2C4f8jGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQCIZEMCSCIREMiWBIBEMiGBLBkAiGRDAkgiERDIlgSARDIhgSwZAIhkQwJIIhEQyJYEgEQyIYEsGQ/ARf9kfKnj/wOwAAAABJRU5ErkJggg==';
 		}
 		else $src = $team['photo'];
-		
+		//w zależności od wartości skrótowej zmiennej wypisujemy pełną nazwę typu drużyny
 		switch($team['plec']) {
 			case 'K':
 				$sex = 'kobieca';
@@ -558,9 +568,9 @@ class Team extends Baza {
 			
 			
 		';
-		
+		//wyliczamy ile jest powiązań obecnych zawodników względem drużyny
 		$total = count($currentPlayer);
-		
+		//jeśli powiązania istnieją, to wyświetlamy każdego zawodnika spełniającego warunek
 		if($total > 0){
 			$i = 0;
 			foreach ($currentPlayer as $key => $value) {
@@ -574,10 +584,10 @@ class Team extends Baza {
 				}
 				
 				echo '<div class="col-lg-4">';
-
+				//wyświetlamy dane szczegółowe zawodnika (imię, nazwisko, prawo- lub leworęczność)
 				$zawodnik = new Player($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);
 				$zawodnik->selectPlayer($value['id_zawodnik']);
-				
+				//dalsze szczegóły dotyczące związku zawodnika z drużyną
 				if(!empty($value['data_od']))
 					echo '<p>Gra w drużyne od: <strong>'.$value['data_od'].'</strong></p>';
 				if(!empty($value['data_do']))
@@ -600,9 +610,9 @@ class Team extends Baza {
 			}
 	
 		}
-		
+		//wyliczamy ile jest powiązań byłych zawodników względem drużyny
 		$total = count($pastPlayer);
-		
+		//jeśli powiązania istnieją, to wyświetlamy każdego zawodnika spełniającego warunek
 		if($total > 0){
 			$i = 0;
 			foreach ($pastPlayer as $key => $value) {
@@ -611,15 +621,16 @@ class Team extends Baza {
 						<hr class="featurette-divider">
 						<div class="row"><h3 class="ctr">Byli zawodnicy:</h3></div>';
 				}	
+				//dla każdego pierwszego elementu z trzech otwieramy diva "wierszowego"
 				if($i%3 == 0) {
 					echo '<div class="row">';	
 				}
 				
 				echo '<div class="col-lg-4">';
-
+				//wyświetlamy dane szczegółowe zawodnika (imię, nazwisko, prawo- lub leworęczność)
 				$zawodnik = new Player($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);
 				$zawodnik->selectPlayer($value['id_zawodnik']);
-				
+				//dalsze szczegóły dotyczące związku zawodnika z drużyną
 				if(!empty($value['data_od']))
 					echo '<p>Gra w drużyne od: <strong>'.$value['data_od'].'</strong></p>';
 				if(!empty($value['data_do']))
@@ -631,7 +642,7 @@ class Team extends Baza {
 				
 				echo '</div>'; // <!-- end col-lg-4 -->
 				
-				
+				//dla 3. (oraz jego krotności) lub ostatniego elementu z tablicy zamykamy div "wierszowy"
 				if(($i%3 == 2) || $i == ($total-1)) {
 					echo '
 						</div>	
@@ -645,14 +656,21 @@ class Team extends Baza {
 
 	}
 	
-	
+	/**
+	* function editSingleTeam
+	* Funkcja pobiera dane dotyczące drużyny, formatuje je i przekazuje do wyświetlenia w postaci formularza
+	*
+	* @param string $id - ID szukanej drużyny
+	* @param string $param - parametr decydujący o edycji lub dodaniu
+	* @return 0
+	*/
 	function editSingleTeam($id, $param) {
 	// call for data from database
 		$stmt = $this->pdo->query('select * from druzyna where id_druzyna='.$id);
 		
 		foreach ($stmt as $row) {
 			//$sex = $row['plec'];
-			
+			//jeśli pole photo zawiera obrazek - przypisujemy go pod zmienną $src, w innym przypadku ustawiamy ogólny obrazek
 			if($row['photo']) 
 				$src = $row['photo'];
 			
@@ -665,17 +683,23 @@ class Team extends Baza {
 			$team['teamPhoto'] = $row['photo'];
 			$team['teamID'] = $id;
 			//$team['fileInput'] = $src;
-			
-		
-			
+			//przekazujemy dane do funkcji odpowiedzialnej za wyświetlanie ich
 			$this->showTeamForm($team);
 	
 		}
 		$stmt->closeCursor();
 	}
 
+	/**
+	* function confirmRemoveTeam
+	* Funkcja wyświetla prośbę o potwierdzenie chęci usunięca drużyny z bazy danych lub odsyła do funkcji usuwającej dane
+	*
+	* @param string $id_team - ID drużyny
+	* @param string $confirm - istnieje potwierdzenie usunięcia
+	* @return 0
+	*/
 	function confirmRemoveTeam($id_team, $confirm) {
-		
+		//jeśli wartość $confirm jest różna od '1' wyświetla dane
 		if($confirm != '1') {
 			//$this->selectTeam($id_team);
 			echo '
@@ -691,6 +715,13 @@ class Team extends Baza {
 		}
 	}		
 	
+	/**
+	* function removeTeam
+	* Funkcja sprawdza czy drużyna istnieje i usuwa ją z bazy danych
+	*
+	* @param string $id_team - ID drużyny
+	* @return 0
+	*/
 	function removeTeam($id_team) {
 	
 		// check if team is connected to any players
@@ -698,13 +729,17 @@ class Team extends Baza {
 		$stmt = $this->pdo->query($try_sql);
 		$row = $stmt->fetch(PDO::FETCH_NUM);
 		
-		
+		//jeśli są - usuwamy powiązania zawodników z usuwaną drużyną
 		if($row[0] >= 1) {
 			try {
+				/*
 				$sql = 'delete from zawodnik_druzyna where id_druzyna='.$id_team;
-				//echo $sql;
 				$result = $this->pdo->exec($sql);
-				if($result >= 0) {
+				*/
+				$result = $this->pdo->prepare('delete from zawodnik_druzyna where id_druzyna= :id_druzyna');
+				$result->bindValue(':id_druzyna', $id_team, PDO::PARAM_STR);
+				$sucess = $result->execute();
+				if($sucess) {
 					echo '
 					<div class="alert alert-success">Pomyślnie usunięto powiązania zawodnika z drużyną.</div>
 					';
@@ -727,13 +762,17 @@ class Team extends Baza {
 		
 		$stmt = $this->pdo->query($try_sql);
 		$row = $stmt->fetch(PDO::FETCH_NUM);
-		
+		//jeśli podana drużyna istnieje
 		if($row[0] >= 1) {
 			try {
+				/*
 				$sql = 'delete from druzyna where id_druzyna='.$id_team;
-				//echo $sql;
 				$result = $this->pdo->exec($sql);
-				if($result > 0) {
+				*/
+				$result = $this->pdo->prepare('delete from druzyna where id_druzyna= :id_druzyna');
+				$result->bindValue(':id_druzyna', $id_team, PDO::PARAM_STR);
+				$sucess = $result->execute();
+				if($sucess) {
 					echo '
 					<div class="alert alert-success">Pomyślnie usunięto drużynę.</div>
 					';
@@ -752,13 +791,21 @@ class Team extends Baza {
 			
 		}
 		
-		
+		//link nawigacyjny
 		echo '
 			<div>Powrót do <a href="admin-teams.php">strony administracyjnej drużynami</a>.</div>
 		';
 		
 	}
 	
+	/**
+	* function editTeamMembers
+	* Funkcja zmienia powiązania bądź je dodaje pomiędzy wybranym zawodnikiem a drużyny z którą jest lub ma być powiązany
+	*
+	* @param string $id_team - ID drużyny
+	* @param string $action - akcja (edycja członków drużyny lub dodanie członka drużyny) 
+	* @return 0
+	*/
 	function editTeamMembers($id_team, $action) {
         //wybrano edycje powiazan
 		if($action == 'edit_members') {
@@ -772,11 +819,11 @@ class Team extends Baza {
 			foreach($temp as $key => $value) {
 				//ponowne polaczenie z baza danych poprzez obiekt Player
 				$zawodnik = new Player($this->_dbms, $this->_host, $this->_database, $this->_port, $this->_username, $this->_password);
-			
+				//dla każdego pierwszego elementu z trzech otwieramy diva "wierszowego"
 				if(!($key%3)) {
 						echo '<div class="row">';
 				}	
-				
+				//unikalny ciąg znaków potrzebny do wygenerowania ID dla label oraz odpowiadających im pól
 				$uniqueID = $id_team.$value['id_zawodnik'];
 				echo '
 					
@@ -827,7 +874,7 @@ class Team extends Baza {
 					</div>	
 				';
 				
-				
+				//dla 3. (oraz jego krotności) lub ostatniego elementu z tablicy zamykamy div "wierszowy"
 				if(($key%3 == 2) || $key == ($total-1)) {
 						echo '
 							</div>	
@@ -839,7 +886,7 @@ class Team extends Baza {
 			
 			
 		}
-         //wybrano akcje
+         //wybrano akcje dodania zawodnika do drużyny
 		elseif($action == 'add_member') {
         
             //pobieramy liste wszystkich zawodnikow w bazie
